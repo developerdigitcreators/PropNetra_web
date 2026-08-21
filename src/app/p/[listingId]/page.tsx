@@ -15,17 +15,18 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { listingId } = await params;
   const showPrice = parseShowPrice((await searchParams).price);
-  return listingCardMetadata(listingId, showPrice, `/share/listings/${listingId}`);
+  return listingCardMetadata(listingId, showPrice, `/p/${listingId}`);
 }
 
-export default async function SharedSingleListingPage({ params, searchParams }: PageProps) {
+/** Broker share of an agent's own listing on propnetra.devsol.in. Same card as /share/listings. */
+export default async function BrokerListingPage({ params, searchParams }: PageProps) {
   const { listingId } = await params;
   const showPrice = parseShowPrice((await searchParams).price);
   return (
     <ListingCardScreen
       listingId={listingId}
       showPrice={showPrice}
-      path={`/share/listings/${listingId}`}
+      path={`/p/${listingId}`}
     />
   );
 }

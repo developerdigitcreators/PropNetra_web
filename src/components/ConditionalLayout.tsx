@@ -7,7 +7,7 @@ import FloatingActions from "@/components/FloatingActions";
 import AgentFloatingActions from "@/components/AgentFloatingActions";
 
 // Routes that use their own full-page layout (no global Header/Footer)
-const NO_LAYOUT_ROUTES = ['/agent/notifications', '/share'];
+const NO_LAYOUT_ROUTES = ['/agent/notifications', '/share', '/p'];
 
 // Routes that hide only the footer
 const AGENT_ROUTES = ['/agent', '/real-estate-agents'];

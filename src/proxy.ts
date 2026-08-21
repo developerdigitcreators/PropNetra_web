@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import {
   isAgentPath,
   isAllowedSiteHost,
+  isBrokerListingPath,
   isLocalHost,
   isPropnetraHost,
   isShareAppPath,
@@ -63,8 +64,10 @@ function handleShareHost(request: NextRequest) {
 }
 
 /**
- * propnetra.devsol.in  → marketing site only
- * 168-144-88-78.sslip.io (and other share hosts) → WhatsApp card review pages
+ * propnetra.devsol.in  → marketing site
+ *   /p/:listingId      → broker WhatsApp listing card (same UI as sslip /share/listings)
+ *   /api/og-image      → OG image proxy for that card
+ * 168-144-88-78.sslip.io → client WhatsApp share pages only
  */
 export function proxy(request: NextRequest) {
   const host = hostname(request);
@@ -81,7 +84,11 @@ export function proxy(request: NextRequest) {
   }
 
   if (isPropnetraHost(host)) {
-    if (isShareAppPath(request.nextUrl.pathname) || isAgentPath(request.nextUrl.pathname)) {
+    const { pathname } = request.nextUrl;
+    if (isBrokerListingPath(pathname) || pathname.startsWith("/api/og-image")) {
+      return withShareHeader(request);
+    }
+    if (isShareAppPath(pathname) || isAgentPath(pathname)) {
       return notFound();
     }
     return NextResponse.next();
