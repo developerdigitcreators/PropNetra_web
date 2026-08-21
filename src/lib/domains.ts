@@ -27,7 +27,9 @@ export function shareHosts() {
 
   return new Set([
     DEFAULT_SHARE_DOMAIN,
+    DEFAULT_MERGED_DOMAIN,
     "share.localhost",
+    "merged.localhost",
     "propnetra-client-share.vercel.app",
     ...configured,
   ]);
@@ -37,7 +39,8 @@ export function isShareHost(host?: string | null) {
   const normalized = normalizeHost(host);
   if (!normalized) return false;
   if (shareHosts().has(normalized)) return true;
-  return normalized.startsWith("share.");
+  if (normalized.startsWith("share.")) return true;
+  return isMergedHost(normalized);
 }
 
 export function isLocalHost(host?: string | null) {
@@ -80,7 +83,6 @@ export function isMergedHost(host?: string | null) {
   return normalized.endsWith(".sslip.io");
 }
 
-/** Marketing site paths served only on propnetra.devsol.in */
 const PROPNETRA_PREFIXES = [
   "/blogs",
   "/careers",
@@ -94,22 +96,27 @@ const PROPNETRA_PREFIXES = [
   "/maps",
 ];
 
-export function isMergedPath(pathname: string) {
+export function isAgentPath(pathname: string) {
   return pathname === "/agent" || pathname.startsWith("/agent/");
+}
+
+/** WhatsApp card / share microsite paths (the merged project). */
+export function isShareAppPath(pathname: string) {
+  return (
+    pathname === "/share" ||
+    pathname.startsWith("/share/") ||
+    pathname === "/clients" ||
+    pathname.startsWith("/clients/") ||
+    pathname === "/listings" ||
+    pathname.startsWith("/listings/") ||
+    pathname.startsWith("/api/og-image")
+  );
 }
 
 export function isPropnetraPath(pathname: string) {
   if (pathname === "/") return true;
   return PROPNETRA_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
-  );
-}
-
-export function isSharedPath(pathname: string) {
-  return (
-    pathname.startsWith("/api/") ||
-    pathname === "/api" ||
-    pathname.startsWith("/share")
   );
 }
 
@@ -123,7 +130,6 @@ function configuredSiteHosts() {
     .filter(Boolean);
 }
 
-/** Local / unset lock: allow all hosts. Production allows live + merged + share. */
 export function isAllowedSiteHost(host?: string | null) {
   const normalized = normalizeHost(host);
   if (!normalized) return false;

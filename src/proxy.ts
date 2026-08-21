@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
+  isAgentPath,
   isAllowedSiteHost,
   isLocalHost,
-  isMergedHost,
-  isMergedPath,
   isPropnetraHost,
-  isPropnetraPath,
+  isShareAppPath,
   isShareHost,
-  isSharedPath,
 } from "@/lib/domains";
 
 function hostname(request: NextRequest) {
@@ -33,6 +31,14 @@ function rewriteToShare(request: NextRequest, pathname = "/share") {
   return NextResponse.rewrite(url, { request: { headers } });
 }
 
+/**
+ * Merged WhatsApp-card site:
+ *   /                         → share home
+ *   /share/clients/:id        → property cards for a client
+ *   /share/listings/:id       → single listing card
+ *   /clients/:id, /listings/:id (short links) rewrite to /share/...
+ * Anything else (marketing, /agent) is 404.
+ */
 function handleShareHost(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -53,16 +59,12 @@ function handleShareHost(request: NextRequest) {
     return rewriteToShare(request, `/share${pathname}`);
   }
 
-  return rewriteToShare(request);
+  return notFound();
 }
 
 /**
- * Domain isolation (same Next.js process, two public hosts):
- * - propnetra.devsol.in  → marketing pages only
- * - *.sslip.io           → merged /agent app only
- *
- * Route groups like (propnetra) cannot both own `/`, so isolation is
- * host + path allowlists instead of rewriting to /(propnetra).
+ * propnetra.devsol.in  → marketing site only
+ * 168-144-88-78.sslip.io (and other share hosts) → WhatsApp card review pages
  */
 export function proxy(request: NextRequest) {
   const host = hostname(request);
@@ -70,41 +72,19 @@ export function proxy(request: NextRequest) {
     return notFound();
   }
 
-  if (isShareHost(host)) {
-    return handleShareHost(request);
-  }
-
-  // localhost: no isolation so both apps can be developed on one origin
   if (isLocalHost(host)) {
     return NextResponse.next();
   }
 
-  const { pathname } = request.nextUrl;
-
-  if (isSharedPath(pathname)) {
-    return NextResponse.next();
+  if (isShareHost(host)) {
+    return handleShareHost(request);
   }
 
   if (isPropnetraHost(host)) {
-    if (isMergedPath(pathname)) {
+    if (isShareAppPath(request.nextUrl.pathname) || isAgentPath(request.nextUrl.pathname)) {
       return notFound();
     }
     return NextResponse.next();
-  }
-
-  if (isMergedHost(host)) {
-    if (pathname === "/") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/agent";
-      return NextResponse.redirect(url);
-    }
-    if (isMergedPath(pathname)) {
-      return NextResponse.next();
-    }
-    if (isPropnetraPath(pathname)) {
-      return notFound();
-    }
-    return notFound();
   }
 
   return NextResponse.next();

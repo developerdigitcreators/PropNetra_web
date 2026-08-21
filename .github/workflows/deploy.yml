@@ -47,9 +47,9 @@ jobs:
           NEXT_PUBLIC_SITE_HOST=${LIVE_DOMAIN}
           NEXT_PUBLIC_SITE_HOSTS=${SSLIP}
           STAGING_HOST=${SSLIP}
-          NEXT_PUBLIC_SHARE_DOMAIN=${NEXT_PUBLIC_SHARE_DOMAIN:-share.propnetra.com}
-          NEXT_PUBLIC_SHARE_SITE_URL=${NEXT_PUBLIC_SHARE_SITE_URL:-https://share.propnetra.com}
-          NEXT_PUBLIC_SHARE_DOMAINS=${NEXT_PUBLIC_SHARE_DOMAINS:-share.localhost,propnetra-client-share.vercel.app}
+          NEXT_PUBLIC_SHARE_DOMAIN=${NEXT_PUBLIC_SHARE_DOMAIN:-$SSLIP}
+          NEXT_PUBLIC_SHARE_SITE_URL=${NEXT_PUBLIC_SHARE_SITE_URL:-https://$SSLIP}
+          NEXT_PUBLIC_SHARE_DOMAINS=${NEXT_PUBLIC_SHARE_DOMAINS:-$SSLIP,share.localhost,propnetra-client-share.vercel.app}
           EOF
 
       - name: Setup Node
