@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
+  DEFAULT_SHARE_CLIENT_ID,
   isAgentPath,
   isAllowedSiteHost,
   isBrokerListingPath,
@@ -34,7 +35,7 @@ function rewriteToShare(request: NextRequest, pathname = "/share") {
 
 /**
  * Merged WhatsApp-card site:
- *   /                         → share home
+ *   / and /share              → client property cards
  *   /share/clients/:id        → property cards for a client
  *   /share/listings/:id       → single listing card
  *   /clients/:id, /listings/:id (short links) rewrite to /share/...
@@ -43,8 +44,14 @@ function rewriteToShare(request: NextRequest, pathname = "/share") {
 function handleShareHost(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname === "/") {
-    return rewriteToShare(request);
+  if (pathname === "/" || pathname === "/share") {
+    const url = request.nextUrl.clone();
+    url.pathname = `/share/clients/${DEFAULT_SHARE_CLIENT_ID}`;
+    if (!url.searchParams.has("og")) url.searchParams.set("og", "3");
+    if (!url.searchParams.has("n")) url.searchParams.set("n", "5");
+    const headers = new Headers(request.headers);
+    headers.set("x-propnetra-site", "share");
+    return NextResponse.rewrite(url, { request: { headers } });
   }
 
   if (pathname.startsWith("/share") || pathname.startsWith("/api/og-image")) {

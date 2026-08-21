@@ -1,6 +1,13 @@
 export const DEFAULT_SHARE_DOMAIN = "share.propnetra.com";
 export const DEFAULT_PROPNETRA_DOMAIN = "propnetra.devsol.in";
 export const DEFAULT_MERGED_DOMAIN = "168-144-88-78.sslip.io";
+/** WhatsApp client list shown on the merged/sslip domain. */
+export const DEFAULT_SHARE_CLIENT_ID =
+  process.env.NEXT_PUBLIC_SHARE_CLIENT_ID ||
+  "8f8215df-f89c-4f68-ae5b-2a31b777b177";
+export const DEFAULT_SHARE_LISTING_ID =
+  process.env.NEXT_PUBLIC_SHARE_LISTING_ID ||
+  "0b9acdb6-3779-4045-994c-a84661c2360c";
 
 export function normalizeHost(host?: string | null) {
   return (host || "")

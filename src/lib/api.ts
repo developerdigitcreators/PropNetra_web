@@ -38,9 +38,10 @@ async function getJson<T>(path: string): Promise<T> {
   return body.data;
 }
 
-export function fetchSharedList(clientId: string, showPrice = false) {
+export function fetchSharedList(clientId: string, showPrice = false, limit = 100) {
+  const safeLimit = Math.min(100, Math.max(1, Number(limit) || 100));
   return getJson<SharedListResponse>(
-    `/share/clients/${clientId}?limit=100&price=${showPrice ? "1" : "0"}`,
+    `/share/clients/${clientId}?limit=${safeLimit}&price=${showPrice ? "1" : "0"}`,
   );
 }
 

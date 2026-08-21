@@ -11,18 +11,25 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ clientId: string }>;
-  searchParams: Promise<{ price?: string }>;
+  searchParams: Promise<{ price?: string; og?: string; n?: string }>;
 };
+
+function parseLimit(raw?: string | string[] | null) {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : 100;
+}
 
 export async function generateMetadata({
   params,
   searchParams,
 }: PageProps): Promise<Metadata> {
   const { clientId } = await params;
-  const showPrice = parseShowPrice((await searchParams).price);
+  const query = await searchParams;
+  const showPrice = parseShowPrice(query.price);
   const origin = await resolveSiteUrl();
   try {
-    const data = await fetchSharedList(clientId, showPrice);
+    const data = await fetchSharedList(clientId, showPrice, parseLimit(query.n));
     return clientListMetadata({
       clientName: data.clientName,
       total: data.total,
@@ -37,9 +44,10 @@ export async function generateMetadata({
 
 export default async function SharedClientPage({ params, searchParams }: PageProps) {
   const { clientId } = await params;
-  const showPrice = parseShowPrice((await searchParams).price);
+  const query = await searchParams;
+  const showPrice = parseShowPrice(query.price);
   const origin = await resolveSiteUrl();
-  const data = await fetchSharedList(clientId, showPrice);
+  const data = await fetchSharedList(clientId, showPrice, parseLimit(query.n));
   const groups = data.groups?.length
     ? data.groups
     : [

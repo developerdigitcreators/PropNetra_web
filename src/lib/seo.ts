@@ -88,7 +88,14 @@ export function listingShareMetadata(
       url,
       locale: "en_IN",
       images: hasImage
-        ? [{ url: image as string, width: 1200, height: 630, alt: title, type: "image/jpeg" }]
+        ? [{
+            url: image as string,
+            secureUrl: image as string,
+            width: 1200,
+            height: 630,
+            alt: title,
+            type: "image/jpeg",
+          }]
         : undefined,
     },
     twitter: {
@@ -129,7 +136,14 @@ export function clientListMetadata(args: {
       url,
       locale: "en_IN",
       images: hasImage
-        ? [{ url: image as string, width: 1200, height: 630, alt: title, type: "image/jpeg" }]
+        ? [{
+            url: image as string,
+            secureUrl: image as string,
+            width: 1200,
+            height: 630,
+            alt: title,
+            type: "image/jpeg",
+          }]
         : undefined,
     },
     twitter: {

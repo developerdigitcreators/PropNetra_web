@@ -30,11 +30,15 @@ export async function resolveSiteUrl() {
       ""
     )
       .split(",")[0]
-      .trim();
+      .trim()
+      .replace(/:\d+$/, "");
     if (raw) {
-      const proto =
-        headerStore.get("x-forwarded-proto") ||
-        (/^(localhost|127\.0\.0\.1)(:|$)/i.test(raw) ? "http" : "https");
+      const forwarded = (headerStore.get("x-forwarded-proto") || "")
+        .split(",")[0]
+        .trim()
+        .toLowerCase();
+      const isLocal = /^(localhost|127\.0\.0\.1)$/i.test(raw);
+      const proto = isLocal ? forwarded || "http" : "https";
       return `${proto}://${raw}`.replace(/\/$/, "");
     }
   } catch {
@@ -89,5 +93,8 @@ export function proxiedOgImageUrl(url?: string | null, origin = SITE_URL) {
       : url;
   if (!absolute || absolute === siteLogoUrl(origin)) return null;
   const safe = whatsappSafeImageUrl(absolute);
-  return siteUrl(`/api/og-image?u=${encodeURIComponent(safe)}`, origin);
+  const proxyOrigin = origin.startsWith("http://") && !/localhost|127\.0\.0\.1/i.test(origin)
+    ? origin.replace(/^http:/i, "https:")
+    : origin;
+  return siteUrl(`/api/og-image?u=${encodeURIComponent(safe)}`, proxyOrigin);
 }
