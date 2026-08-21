@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
     jpeg = buffer;
   }
 
-  return new NextResponse(jpeg, {
+  return new NextResponse(Uint8Array.from(jpeg), {
     status: 200,
     headers: {
       "Content-Type": jpeg === buffer && contentType.startsWith("image/")

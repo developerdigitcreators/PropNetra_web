@@ -69,5 +69,20 @@ jobs:
             set -euo pipefail
             cd /home/ubuntu/prop_f
             npm ci --omit=dev --legacy-peer-deps
-            pm2 restart 0 || pm2 start ecosystem.config.cjs
+            TARGET="$(
+              pm2 jlist | node -e '
+                const apps = JSON.parse(require("fs").readFileSync(0, "utf8") || "[]");
+                const hit = apps.find((app) => {
+                  const cwd = String((app.pm2_env && app.pm2_env.pm_cwd) || "").replace(/\/$/, "");
+                  return app.name === "propnetra-web" || cwd === "/home/ubuntu/prop_f";
+                });
+                if (!hit) return;
+                process.stdout.write(hit.name || String(hit.pm_id));
+              '
+            )"
+            if [ -n "$TARGET" ]; then
+              pm2 restart "$TARGET" --update-env
+            else
+              pm2 start ecosystem.config.cjs
+            fi
             pm2 save
