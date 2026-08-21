@@ -76,8 +76,7 @@ jobs:
                   const cwd = String((app.pm2_env && app.pm2_env.pm_cwd) || "").replace(/\/$/, "");
                   return app.name === "propnetra-web" || cwd === "/home/ubuntu/prop_f";
                 });
-                if (!hit) return;
-                process.stdout.write(hit.name || String(hit.pm_id));
+                if (hit) process.stdout.write(hit.name || String(hit.pm_id));
               '
             )"
             if [ -n "$TARGET" ]; then
