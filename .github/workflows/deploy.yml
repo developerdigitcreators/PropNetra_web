@@ -1,41 +1,89 @@
-name: Deploy to Live Server
+name: Deploy production build
 
 on:
   push:
     branches:
-      - master
+      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
-    name: Deploy to Server
+    name: Build and deploy to prop_f
     runs-on: ubuntu-latest
+
+    env:
+      LIVE_DOMAIN: propnetra.devsol.in
+      APP_DIR: /home/ubuntu/prop_f
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Derive sslip.io hostname
+        id: hosts
+        env:
+          DROPLET_IP: ${{ secrets.HOST }}
+        run: |
+          if [ -z "$DROPLET_IP" ]; then
+            echo "HOST secret is required" >&2
+            exit 1
+          fi
+          echo "sslip=$(echo "$DROPLET_IP" | tr '.' '-').sslip.io" >> "$GITHUB_OUTPUT"
+
+      - name: Write production env
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_SHARE_DOMAIN: ${{ secrets.NEXT_PUBLIC_SHARE_DOMAIN }}
+          NEXT_PUBLIC_SHARE_SITE_URL: ${{ secrets.NEXT_PUBLIC_SHARE_SITE_URL }}
+          NEXT_PUBLIC_SHARE_DOMAINS: ${{ secrets.NEXT_PUBLIC_SHARE_DOMAINS }}
+          SSLIP: ${{ steps.hosts.outputs.sslip }}
+        run: |
+          API_BASE_URL="${API_BASE_URL:-}"
+          NEXT_PUBLIC_API_BASE_URL="${NEXT_PUBLIC_API_BASE_URL:-$API_BASE_URL}"
+          cat > .env.production <<EOF
+          API_BASE_URL=${API_BASE_URL}
+          NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+          NEXT_PUBLIC_SITE_HOST=${LIVE_DOMAIN}
+          NEXT_PUBLIC_SITE_HOSTS=${SSLIP}
+          STAGING_HOST=${SSLIP}
+          NEXT_PUBLIC_SHARE_DOMAIN=${NEXT_PUBLIC_SHARE_DOMAIN:-share.propnetra.com}
+          NEXT_PUBLIC_SHARE_SITE_URL=${NEXT_PUBLIC_SHARE_SITE_URL:-https://share.propnetra.com}
+          NEXT_PUBLIC_SHARE_DOMAINS=${NEXT_PUBLIC_SHARE_DOMAINS:-share.localhost,propnetra-client-share.vercel.app}
+          EOF
+
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          
+          cache: npm
+
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: Build Project
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_SITE_HOST: ${{ env.LIVE_DOMAIN }}
+          NEXT_PUBLIC_SITE_HOSTS: ${{ steps.hosts.outputs.sslip }}
+          STAGING_HOST: ${{ steps.hosts.outputs.sslip }}
+          NEXT_PUBLIC_SHARE_DOMAIN: ${{ secrets.NEXT_PUBLIC_SHARE_DOMAIN }}
+          NEXT_PUBLIC_SHARE_SITE_URL: ${{ secrets.NEXT_PUBLIC_SHARE_SITE_URL }}
+          NEXT_PUBLIC_SHARE_DOMAINS: ${{ secrets.NEXT_PUBLIC_SHARE_DOMAINS }}
         run: npm run build
 
-      - name: Copy files to Server
+      - name: Copy production build to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: ".next,package.json,public,next.config.js,.env.production"
-          target: "/home/ubuntu/prop_f"
+          source: ".next,package.json,package-lock.json,public,next.config.mjs,ecosystem.config.cjs,.env.production,scripts/remote-deploy.sh,scripts/bootstrap-apache.sh"
+          target: ${{ env.APP_DIR }}
 
-      - name: SSH to server and restart app
+      - name: Install deps and reload PM2
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
@@ -43,6 +91,23 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # cd /home/ubuntu/prop_f
-            # npm install --production --legacy-peer-deps
-            pm2 restart 0
+            set -euo pipefail
+            APP_DIR="/home/ubuntu/prop_f"
+            if [ ! -d "$APP_DIR" ]; then
+              echo "Missing $APP_DIR" >&2
+              exit 1
+            fi
+            chmod +x "$APP_DIR/scripts/remote-deploy.sh" "$APP_DIR/scripts/bootstrap-apache.sh"
+            bash "$APP_DIR/scripts/remote-deploy.sh"
+
+      - name: Bootstrap Apache sslip.io vhost
+        continue-on-error: true
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -euo pipefail
+            bash "/home/ubuntu/prop_f/scripts/bootstrap-apache.sh" "${{ secrets.HOST }}"

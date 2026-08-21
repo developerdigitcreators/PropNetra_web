@@ -124,12 +124,12 @@ export default function BuyerRequirementsPage() {
     ];
 
     const trendingProjects = [
-        { name: 'MVN Aero One', badge: "Exclusive", price: '₹19.6 - 42.1 Cr', loc: 'Sector 37D', img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=600' },
-        { name: 'Oberoi Sixty North', badge: "Exclusive", price: '₹23.1 - 35.7 Cr', loc: 'Golf Course', img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600' },
-        { name: 'SmartWorld Saab', badge: "Exclusive", price: '₹1.81 - 11.05 Cr', loc: 'Noida Express', img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600' },
-        { name: 'Whiteland Westin', badge: "Exclusive", price: '₹6.68 - 11.25 Cr', loc: 'Sector 103', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600' },
-        { name: 'Whiteland Westin', badge: "Exclusive", price: '₹6.68 - 11.25 Cr', loc: 'Sector 103', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600' },
-        { name: 'Whiteland Westin', badge: "Exclusive", price: '₹6.68 - 11.25 Cr', loc: 'Sector 103', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600' }
+        { name: 'MVN Aero One', badge: "Exclusive", price: '₹19.6 - 42.1 Cr', loc: 'Sector 37D', city: 'Gurgaon', img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=600' },
+        { name: 'Oberoi Sixty North', badge: "Exclusive", price: '₹23.1 - 35.7 Cr', loc: 'Golf Course', city: 'Gurgaon', img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600' },
+        { name: 'SmartWorld Saab', badge: "Exclusive", price: '₹1.81 - 11.05 Cr', loc: 'Noida Express', city: 'Noida', img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600' },
+        { name: 'Whiteland Westin', badge: "Exclusive", price: '₹6.68 - 11.25 Cr', loc: 'Sector 103', city: 'Gurgaon', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600' },
+        { name: 'Whiteland Westin', badge: "Exclusive", price: '₹6.68 - 11.25 Cr', loc: 'Sector 103', city: 'Gurgaon', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600' },
+        { name: 'Whiteland Westin', badge: "Exclusive", price: '₹6.68 - 11.25 Cr', loc: 'Sector 103', city: 'Gurgaon', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600' }
     ];
 
     const requirements = Array(9).fill({

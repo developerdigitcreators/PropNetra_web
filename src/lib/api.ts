@@ -38,18 +38,24 @@ async function getJson<T>(path: string): Promise<T> {
   return body.data;
 }
 
-export function fetchSharedList(clientId: string) {
+export function fetchSharedList(clientId: string, showPrice = false) {
   return getJson<SharedListResponse>(
-    `/share/clients/${clientId}?limit=100`,
+    `/share/clients/${clientId}?limit=100&price=${showPrice ? "1" : "0"}`,
   );
 }
 
-export function fetchSharedListing(clientId: string, listingId: string) {
+export function fetchSharedListing(
+  clientId: string,
+  listingId: string,
+  showPrice = false,
+) {
   return getJson<SharedDetailResponse>(
-    `/share/clients/${clientId}/listings/${listingId}`,
+    `/share/clients/${clientId}/listings/${listingId}?price=${showPrice ? "1" : "0"}`,
   );
 }
 
-export function fetchPublicListing(listingId: string) {
-  return getJson<SharedSingleListingResponse>(`/share/listings/${listingId}`);
+export function fetchPublicListing(listingId: string, showPrice = false) {
+  return getJson<SharedSingleListingResponse>(
+    `/share/listings/${listingId}?price=${showPrice ? "1" : "0"}`,
+  );
 }

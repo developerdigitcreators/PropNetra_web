@@ -159,7 +159,7 @@ const BookDemo = () => {
                 </button>
 
                 <p className="text-[10px] text-zinc-400 text-center font-medium opacity-80">
-                  By clicking "Schedule Demo", you agree to our <span className="text-dark font-bold underline cursor-pointer">Terms</span> and <span className="text-dark font-bold underline cursor-pointer">Privacy Policy</span>.
+                  By clicking &quot;Schedule Demo&quot;, you agree to our <span className="text-dark font-bold underline cursor-pointer">Terms</span> and <span className="text-dark font-bold underline cursor-pointer">Privacy Policy</span>.
                 </p>
               </form>
             </div>

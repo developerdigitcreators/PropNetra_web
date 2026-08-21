@@ -31,10 +31,11 @@ const CityDetailPage = () => {
     const [selectedFilter, setSelectedFilter] = useState("All Maps");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    const citySectors = sectorsData[title?.toLowerCase()] || sectorsData.gurugram;
+    const titleSlug = String(Array.isArray(title) ? title[0] : title || "").toLowerCase();
+    const citySectors = sectorsData[titleSlug as keyof typeof sectorsData] || sectorsData.gurugram;
     const filteredSectors = citySectors.filter(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const cityName = title ? title.charAt(0).toUpperCase() + title.slice(1) : "Gurugram";
+    const cityName = titleSlug ? titleSlug.charAt(0).toUpperCase() + titleSlug.slice(1) : "Gurugram";
 
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);

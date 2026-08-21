@@ -266,7 +266,7 @@ export default function InteriorsPage() {
                                     src={img} 
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 relative z-10" 
                                     alt={`Thumbnail ${i}`} 
-                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                 />
                             </div>
                         ))}

@@ -252,7 +252,7 @@ export default function MyListingsPage() {
     );
 }
 
-function Award({ size, className }) {
+function Award({ size, className = "" }) {
     return (
         <svg 
             width={size} 

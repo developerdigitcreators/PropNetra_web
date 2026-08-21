@@ -15,7 +15,12 @@ export default function PricingPage() {
     const containerRef = useRef(null);
     const box1Ref = useRef(null);
     const box2Ref = useRef(null);
-    const refCallbacks = useRef({});
+    const refCallbacks = useRef<{
+        onMouseMoveBox1?: (e: React.MouseEvent) => void;
+        onMouseLeaveBox1?: () => void;
+        onMouseMoveBox2?: (e: React.MouseEvent) => void;
+        onMouseLeaveBox2?: () => void;
+    }>({});
 
     const plans = [
         {
@@ -520,53 +525,53 @@ export default function PricingPage() {
                     </div>
                     <div className="plans-grid" style={{ gridTemplateColumns: "repeat(2,1fr)", maxWidth: "1060px", }}>
                         <div className="feature-group-items grid-view">
-                            <div class="feature-row">
-                                <div class="feat-name">
+                            <div className="feature-row">
+                                <div className="feat-name">
                                     <svg fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
-                                    <div class="feat-text">
-                                        <span class="feat-title">Verified & Updated Inventories</span>
+                                    <div className="feat-text">
+                                        <span className="feat-title">Verified & Updated Inventories</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="feature-row">
-                                <div class="feat-name">
+                            <div className="feature-row">
+                                <div className="feat-name">
                                     <svg fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
-                                    <div class="feat-text">
-                                        <span class="feat-title">Citywise Inventory Access Sell and Buy Postings</span>
+                                    <div className="feat-text">
+                                        <span className="feat-title">Citywise Inventory Access Sell and Buy Postings</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="feature-row">
-                                <div class="feat-name">
+                            <div className="feature-row">
+                                <div className="feat-name">
                                     <svg fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
-                                    <div class="feat-text">
-                                        <span class="feat-title">Unified Notification ChatBOT</span>
+                                    <div className="feat-text">
+                                        <span className="feat-title">Unified Notification ChatBOT</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="feature-row">
-                                <div class="feat-name">
+                            <div className="feature-row">
+                                <div className="feat-name">
                                     <svg fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
-                                    <div class="feat-text">
-                                        <span class="feat-title">Smart Al Property Matching Customised Property Creatives</span>
+                                    <div className="feat-text">
+                                        <span className="feat-title">Smart Al Property Matching Customised Property Creatives</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="feature-row">
-                                <div class="feat-name">
+                            <div className="feature-row">
+                                <div className="feat-name">
                                     <svg fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
-                                    <div class="feat-text">
-                                        <span class="feat-title">Get 150 Channel Listing Contacts (Per Month)</span>
+                                    <div className="feat-text">
+                                        <span className="feat-title">Get 150 Channel Listing Contacts (Per Month)</span>
                                     </div>
                                 </div>
                             </div>

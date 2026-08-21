@@ -82,8 +82,8 @@ const PropertiesSection = () => {
       );
 
       // Card hovering parallax effect
-      gsap.utils.toArray(".amenity-card").forEach((card) => {
-        card.addEventListener("mousemove", (e) => {
+      gsap.utils.toArray<HTMLElement>(".amenity-card").forEach((card) => {
+        card.addEventListener("mousemove", (e: MouseEvent) => {
           const rect = card.getBoundingClientRect();
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
@@ -164,7 +164,7 @@ const PropertiesSection = () => {
                 key={item.id}
                 className={`prop-reveal amenity-card card-base card-hover group cursor-pointer border ${item.dark ? "card-dark border-transparent" : "card-light border-zinc-100"
                   } ${item.size === 'large' ? 'md:h-[380px]' : 'md:h-[320px]'} ${idx % 2 !== 0 ? 'md:translate-y-12' : ''}`}
-                style={{ "--accent-color": item.dark ? "var(--primary)" : "rgba(0,0,0,0.1)" }}
+                style={{ ["--accent-color" as string]: item.dark ? "var(--primary)" : "rgba(0,0,0,0.1)" } as React.CSSProperties}
               >
                 {/* Shine effect on hover */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-[radial-gradient(circle_at_var(--mouse-x)_var(--mouse-y),var(--accent-color)_0%,transparent_70%)]" />

@@ -10,7 +10,12 @@ const HowItWorks = ({ isTrue = false }) => {
   const containerRef = useRef(null);
   const box1Ref = useRef(null);
   const box2Ref = useRef(null);
-  const refCallbacks = useRef({});
+  const refCallbacks = useRef<{
+    onMouseMoveBox1?: (e: React.MouseEvent) => void;
+    onMouseLeaveBox1?: () => void;
+    onMouseMoveBox2?: (e: React.MouseEvent) => void;
+    onMouseLeaveBox2?: () => void;
+  }>({});
 
   useEffect(() => {
     const ctx = gsap.context(() => {

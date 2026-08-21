@@ -2,14 +2,17 @@
 
 import { useMemo, useState } from "react";
 import { PropertyCard } from "@/components/PropertyCard";
+import { withPriceQuery } from "@/lib/price";
 import type { ListingGroup } from "@/lib/types";
 
 export function GroupedListings({
   clientId,
   groups,
+  showPrice = false,
 }: {
   clientId: string;
   groups: ListingGroup[];
+  showPrice?: boolean;
 }) {
   const visible = useMemo(
     () => groups.filter((group) => group.count > 0),
@@ -61,7 +64,7 @@ export function GroupedListings({
             <PropertyCard
               key={item.id}
               item={item}
-              href={`/share/clients/${clientId}/${item.id}`}
+              href={withPriceQuery(`/share/clients/${clientId}/${item.id}`, showPrice)}
             />
           ))}
         </div>

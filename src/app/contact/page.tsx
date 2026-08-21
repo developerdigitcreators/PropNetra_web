@@ -225,7 +225,7 @@ const ContactPage = () => {
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0, filter: "grayscale(1) contrast(1.2) opacity(0.8)" }}
-                                allowFullScreen=""
+                                allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
                             />

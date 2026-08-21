@@ -50,11 +50,12 @@ const AppFeatures = () => {
       });
 
       // Feature boxes reveal
-      const infoBoxes = gsap.utils.toArray(".appInfoBox");
+      const infoBoxes = gsap.utils.toArray<HTMLElement>(".appInfoBox");
       infoBoxes.forEach((box, i) => {
-        const side = box.closest(".circle").classList.contains("one") ||
-          box.closest(".circle").classList.contains("three") ||
-          box.closest(".circle").classList.contains("five") ? -50 : 50;
+        const circle = box.closest(".circle");
+        const side = circle?.classList.contains("one") ||
+          circle?.classList.contains("three") ||
+          circle?.classList.contains("five") ? -50 : 50;
 
         gsap.from(box, {
           x: side,

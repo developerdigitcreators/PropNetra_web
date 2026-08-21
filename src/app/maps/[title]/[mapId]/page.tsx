@@ -15,8 +15,10 @@ const MapViewerPage = () => {
     const containerRef = useRef(null);
     const [zoom, setZoom] = useState(1);
 
-    const cityName = title ? title.charAt(0).toUpperCase() + title.slice(1) : "Gurugram";
-    const mapName = mapId ? mapId.replace(/-/g, " ").toUpperCase() : "MAP VIEW";
+    const titleSlug = String(Array.isArray(title) ? title[0] : title || "");
+    const mapIdSlug = String(Array.isArray(mapId) ? mapId[0] : mapId || "");
+    const cityName = titleSlug ? titleSlug.charAt(0).toUpperCase() + titleSlug.slice(1) : "Gurugram";
+    const mapName = mapIdSlug ? mapIdSlug.replace(/-/g, " ").toUpperCase() : "MAP VIEW";
 
     useEffect(() => {
         const ctx = gsap.context(() => {

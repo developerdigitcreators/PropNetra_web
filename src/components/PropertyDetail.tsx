@@ -38,6 +38,9 @@ export function PropertyDetail({
             {item.locationLine}
           </p>
         ) : null}
+        {item.priceLabel ? (
+          <p className="mt-2 text-[22px] font-extrabold text-[#F26A21]">{item.priceLabel}</p>
+        ) : null}
 
         {item.mapUrl ? (
           <div className="mt-4 flex justify-end">

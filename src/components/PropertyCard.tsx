@@ -8,9 +8,11 @@ import { areaLabel, formatUpdated } from "@/lib/format";
 export function PropertyCard({
   item,
   href,
+  sharePath,
 }: {
   item: SharedPropertyCard;
   href?: string | null;
+  sharePath?: string;
 }) {
   const area = item.areaLabel || areaLabel(item.area);
   const updated = formatUpdated(item.updatedAt || item.savedAt);
@@ -19,7 +21,7 @@ export function PropertyCard({
     item.postedByBadge,
     item.buildingType,
   ].filter((value): value is string => !!value);
-  const sharePath = href || `/share/listings/${item.id}`;
+  const resolvedSharePath = sharePath || href || `/share/listings/${item.id}`;
   const bodyClass = "block px-4 pt-4";
   const body = (
     <>
@@ -44,6 +46,9 @@ export function PropertyCard({
       </h2>
       {item.locationLine ? (
         <p className="mt-1 text-[13px] text-[#8d8d8d]">{item.locationLine}</p>
+      ) : null}
+      {item.priceLabel ? (
+        <p className="mt-2 text-[18px] font-extrabold text-[#F26A21]">{item.priceLabel}</p>
       ) : null}
 
       <div className="mt-4 border-y border-[#efe8d8] py-3">
@@ -93,7 +98,7 @@ export function PropertyCard({
 
       <div className="flex items-center gap-2.5 px-4 pb-4 pt-3">
         <IconButton label="Save" />
-        <ShareButton title={item.displayTitle} path={sharePath} />
+        <ShareButton title={item.displayTitle} path={resolvedSharePath} />
       </div>
     </article>
   );

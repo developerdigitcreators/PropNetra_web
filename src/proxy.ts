@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isShareHost } from "@/lib/domains";
+import { isAllowedSiteHost, isShareHost } from "@/lib/domains";
 
 function hostname(request: NextRequest) {
   return request.headers.get("host") || "";
@@ -21,7 +21,12 @@ function rewriteToShare(request: NextRequest, pathname = "/share") {
 }
 
 export function proxy(request: NextRequest) {
-  if (!isShareHost(hostname(request))) {
+  const host = hostname(request);
+  if (!isAllowedSiteHost(host)) {
+    return new NextResponse(null, { status: 404 });
+  }
+
+  if (!isShareHost(host)) {
     return NextResponse.next();
   }
 
@@ -36,6 +41,15 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/api/og-image")
   ) {
     return withShareHeader(request);
+  }
+
+  if (
+    pathname.startsWith("/clients/") ||
+    pathname.startsWith("/listings/") ||
+    pathname === "/clients" ||
+    pathname === "/listings"
+  ) {
+    return rewriteToShare(request, `/share${pathname}`);
   }
 
   return rewriteToShare(request);

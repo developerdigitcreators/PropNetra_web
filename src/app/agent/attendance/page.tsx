@@ -303,7 +303,7 @@ export default function AttendancePage() {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Reason / Description</label>
-                                    <textarea rows="3" className="w-full p-6 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold resize-none" placeholder="Explain your request..."></textarea>
+                                    <textarea rows={3} className="w-full p-6 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold resize-none" placeholder="Explain your request..."></textarea>
                                 </div>
                                 <button className="w-full h-16 bg-slate-900 text-white rounded-2xl font-black agent-small uppercase tracking-[0.3em] hover:bg-primary transition-all shadow-xl shadow-slate-900/10">
                                     Submit for Approval

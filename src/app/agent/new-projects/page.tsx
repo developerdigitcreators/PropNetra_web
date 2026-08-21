@@ -66,6 +66,7 @@ export default function NewProjectsPage() {
             title: "LAMBORGHINI",
             subtitle: "BRANDED RESIDENCES",
             price: "₹ 4.8 CR",
+            loc: "Sector 42, Gurugram",
             bg: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=2000"
         }
     ];

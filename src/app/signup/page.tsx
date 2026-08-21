@@ -77,7 +77,7 @@ export default function SignUpPage() {
         // Auto focus next
         if (value && index < 3) {
             const nextInput = document.querySelector(`input[name="otp-${index + 1}"]`);
-            if (nextInput) nextInput.focus();
+            if (nextInput instanceof HTMLInputElement) nextInput.focus();
         }
     };
 
@@ -153,7 +153,7 @@ export default function SignUpPage() {
                                             key={idx}
                                             name={`otp-${idx}`}
                                             type="text"
-                                            maxLength="1"
+                                            maxLength={1}
                                             className="otp-box"
                                             value={digit}
                                             onChange={(e) => handleOtpChange(idx, e.target.value)}

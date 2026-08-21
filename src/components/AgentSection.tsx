@@ -37,13 +37,14 @@ const AgentSection = () => {
 
       // Card hover glow effect
       const cards = document.querySelectorAll(".agent-card");
-      cards.forEach(card => {
-        card.addEventListener("mousemove", (e) => {
-          const rect = card.getBoundingClientRect();
+      cards.forEach((card) => {
+        const el = card as HTMLElement;
+        el.addEventListener("mousemove", (e: MouseEvent) => {
+          const rect = el.getBoundingClientRect();
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
-          card.style.setProperty("--mouse-x", `${x}px`);
-          card.style.setProperty("--mouse-y", `${y}px`);
+          el.style.setProperty("--mouse-x", `${x}px`);
+          el.style.setProperty("--mouse-y", `${y}px`);
         });
       });
     }, sectionRef);

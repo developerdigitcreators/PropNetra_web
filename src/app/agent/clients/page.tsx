@@ -37,6 +37,7 @@ export default function SavedListingsPage() {
             location: "Sector 99A, Gurgaon",
             image: "/images/modal-property.png",
             tag: "Floor",
+            isPlatinum: false,
         },
         { 
             id: 102, 
@@ -47,6 +48,7 @@ export default function SavedListingsPage() {
             location: "Sector 70A, Gurgaon",
             image: "/images/luxury_banner.png",
             tag: "Luxury",
+            isPlatinum: true,
         }
     ];
 
