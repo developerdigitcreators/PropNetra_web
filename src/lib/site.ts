@@ -85,13 +85,15 @@ export function whatsappSafeImageUrl(url: string) {
 
 /** Same-origin JPEG so WhatsApp does not have to follow Unsplash redirects. */
 export function proxiedOgImageUrl(url?: string | null, origin = SITE_URL) {
-  if (!url) return null;
+  if (!url || /^data:|^blob:/i.test(url)) return null;
   const absolute = /^https?:\/\//i.test(url)
     ? url
     : url.startsWith("/")
       ? siteUrl(url, origin)
       : url;
-  if (!absolute || absolute === siteLogoUrl(origin)) return null;
+  if (!absolute || !/^https?:\/\//i.test(absolute) || absolute === siteLogoUrl(origin)) {
+    return null;
+  }
   const safe = whatsappSafeImageUrl(absolute);
   const proxyOrigin = origin.startsWith("http://") && !/localhost|127\.0\.0\.1/i.test(origin)
     ? origin.replace(/^http:/i, "https:")

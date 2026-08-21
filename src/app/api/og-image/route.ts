@@ -4,6 +4,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_BYTES = 8 * 1024 * 1024;
+const OG_WIDTH = 1200;
+const OG_HEIGHT = 630;
 
 function isPublicHttpsUrl(raw: string) {
   let parsed: URL;
@@ -30,6 +32,15 @@ function isPublicHttpsUrl(raw: string) {
   return true;
 }
 
+async function toWhatsAppJpeg(buffer: Buffer): Promise<Buffer> {
+  const sharp = (await import("sharp")).default;
+  return sharp(buffer)
+    .rotate()
+    .resize(OG_WIDTH, OG_HEIGHT, { fit: "cover", position: "centre" })
+    .jpeg({ quality: 82, chromaSubsampling: "4:2:0", mozjpeg: true })
+    .toBuffer();
+}
+
 export async function GET(req: NextRequest) {
   const source = req.nextUrl.searchParams.get("u")?.trim() || "";
   if (!source || !isPublicHttpsUrl(source)) {
@@ -39,8 +50,9 @@ export async function GET(req: NextRequest) {
   const upstream = await fetch(source, {
     redirect: "follow",
     headers: {
-      Accept: "image/jpeg,image/jpg,image/png,image/*;q=0.8,*/*;q=0.1",
-      "User-Agent": "PropNetraOgBot/1.0",
+      Accept: "image/jpeg,image/jpg,image/png,image/webp,image/*;q=0.8,*/*;q=0.1",
+      "User-Agent":
+        "Mozilla/5.0 (compatible; PropNetraOgBot/1.0; +https://propnetra.devsol.in)",
     },
     cache: "no-store",
   });
@@ -62,12 +74,21 @@ export async function GET(req: NextRequest) {
     return new NextResponse("Image too large", { status: 413 });
   }
 
-  return new NextResponse(buffer, {
+  let jpeg: Buffer;
+  try {
+    jpeg = await toWhatsAppJpeg(buffer);
+  } catch {
+    jpeg = buffer;
+  }
+
+  return new NextResponse(jpeg, {
     status: 200,
     headers: {
-      "Content-Type": contentType === "image/jpg" ? "image/jpeg" : contentType,
+      "Content-Type": jpeg === buffer && contentType.startsWith("image/")
+        ? (contentType === "image/jpg" ? "image/jpeg" : contentType)
+        : "image/jpeg",
       "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
-      "Content-Length": String(buffer.length),
+      "Content-Length": String(jpeg.length),
     },
   });
 }
