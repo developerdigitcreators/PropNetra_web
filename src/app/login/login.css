@@ -1,0 +1,326 @@
+.login-page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+    perspective: 2500px;
+}
+
+.login-page-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #0000008f;
+    backdrop-filter: blur(5px);
+    z-index: 1;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.03);
+    width: 100%;
+    max-width: 1100px;
+    height: 600px;
+    display: flex;
+    border-radius: 40px;
+    overflow: visible;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9);
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(25px);
+    transform-style: preserve-3d;
+}
+
+/* Left Section: Image Grid */
+.login-image-section {
+    flex: 1.2;
+    position: relative;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    border-radius: 40px 0 0 40px;
+    overflow: hidden;
+}
+
+.grid-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.grid-item:hover img {
+    transform: scale(1.1) rotate(1deg);
+}
+
+.grid-item-1 {
+    grid-row: span 2;
+}
+
+.grid-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+.grid-item:hover .grid-overlay {
+    opacity: 1;
+}
+
+.grid-overlay span {
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transform: translateY(10px);
+    transition: transform 0.4s ease;
+}
+
+.grid-item:hover .grid-overlay span {
+    transform: translateY(0);
+}
+
+.image-floating-label {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 10;
+    color: white;
+}
+
+.image-floating-label h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Right Section: Form */
+.login-form-section {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    /* Matching glass look */
+    position: relative;
+    color: white;
+}
+
+.tab-switcher {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+.tab-btn.active {
+    color: #bfa37c;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #bfa37c;
+}
+
+.form-container {
+    position: relative;
+    height: 420px;
+}
+
+.form-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: none;
+}
+
+.form-wrapper.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    font-size: 1rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #bfa37c;
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 4px rgba(191, 163, 124, 0.15);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    border: none;
+    background: #bfa37c;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+.submit-btn:hover {
+    background: #d4b486;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(191, 163, 124, 0.3);
+}
+
+.social-login {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.social-divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+    margin-bottom: 25px;
+}
+
+.social-divider::before,
+.social-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.social-btns {
+    display: flex;
+    gap: 15px;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 992px) {
+    .login-image-section {
+        display: none;
+    }
+
+    .login-card {
+        max-width: 500px;
+        height: auto;
+    }
+}
+
+.back-btn {
+    position: fixed;
+    top: 40px;
+    left: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 12px 24px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.back-btn:hover {
+    background: #bfa37c;
+    border-color: #bfa37c;
+    transform: translateX(-5px);
+    box-shadow: 0 10px 25px rgba(191, 163, 124, 0.3);
+}
+
+.back-btn svg {
+    transition: transform 0.3s ease;
+}
+
+.back-btn:hover svg {
+    transform: translateX(-2px);
+}

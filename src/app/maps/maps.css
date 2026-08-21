@@ -1,0 +1,395 @@
+/* =============================================
+   PropNetra Maps Explorer — Luxury Directory
+   ============================================= */
+
+:root {
+    --bg-light: #ffffff;
+    --bg-subtle: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --accent-gold: #ff8a00;
+    --border-light: #e2e8f0;
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.maps-page-v3 {
+    background: var(--bg-light);
+}
+
+/* ── Banner (Compact) ── */
+.maps-hero-v3 {
+    position: relative;
+    padding: 130px 0 70px;
+    background: #000;
+    overflow: hidden;
+    color: #fff;
+}
+
+.maps-hero-bg-v3 {
+    position: absolute;
+    inset: 0;
+    background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2600') center center / cover no-repeat;
+    opacity: 0.5;
+    filter: brightness(0.6);
+}
+
+.maps-hero-overlay-v3 {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #000, transparent 70%);
+}
+
+.eyebrow-v3 {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-gold);
+}
+
+.maps-hero-sub-v3 {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 18px;
+    max-width: 700px;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+/* ── Directory Grid ── */
+.location-directory-section {
+    background: var(--bg-subtle);
+}
+
+.section-title {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
+
+
+/* ── City Spotlight Cards ── */
+.location-spotlight-card {
+    position: relative;
+    height: 500px;
+    border-radius: 32px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #000;
+}
+
+.spotlight-img-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.spotlight-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    opacity: 0.8;
+}
+
+.location-spotlight-card:hover .spotlight-img {
+    transform: scale(1.1);
+}
+
+.spotlight-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 40%, transparent 100%);
+    z-index: 2;
+}
+
+.spotlight-content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.spotlight-top {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.spotlight-region {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--accent-gold);
+}
+
+.spotlight-line {
+    width: 40px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.spotlight-city {
+    font-size: 42px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    transform: translateY(20px);
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.location-spotlight-card:hover .spotlight-city {
+    transform: translateY(0);
+}
+
+.spotlight-name {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.1s;
+}
+
+.location-spotlight-card:hover .spotlight-name {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.spotlight-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s;
+}
+
+.location-spotlight-card:hover .spotlight-footer {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.view-link {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.spotlight-arrow {
+    color: var(--accent-gold);
+    transition: transform 0.3s ease;
+}
+
+.location-spotlight-card:hover .spotlight-arrow {
+    transform: translateX(5px);
+}
+
+.spotlight-glow {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 100px;
+    background: var(--accent-gold);
+    filter: blur(80px);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    z-index: 5;
+}
+
+.location-spotlight-card:hover .spotlight-glow {
+    opacity: 0.3;
+}
+
+
+/* ── Map Modal Overlay ── */
+.map-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.map-modal-container {
+    background: #fff;
+    width: 100%;
+    max-width: 1200px;
+    height: 85vh;
+    border-radius: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.3);
+    animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+    transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: #000;
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+.modal-map-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.modal-info-panel {
+    position: absolute;
+    bottom: 32px;
+    left: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    width: 340px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.mi-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 100px;
+    margin-bottom: 12px;
+}
+
+.mi-header h3 {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.mi-header p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.mi-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.mi-item .label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.mi-item p {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.mi-book-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--text-primary);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mi-book-btn:hover {
+    background: var(--accent-gold);
+    transform: translateY(-2px);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .map-modal-container {
+        height: 95vh;
+        border-radius: 24px;
+    }
+
+    .modal-info-panel {
+        left: 16px;
+        bottom: 16px;
+        width: calc(100% - 32px);
+        padding: 20px;
+    }
+}
