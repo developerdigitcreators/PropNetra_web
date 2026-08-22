@@ -1,4 +1,6 @@
-export function areaLabel(area?: { size: number | null; unit: string | null } | null) {
+export function areaLabel(
+  area?: { size: number | null; unit: string | null } | null,
+) {
   if (!area?.size) return null;
   const unit = String(area.unit || "sqft")
     .replace(/_/g, ".")
