@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import type { ShareOg, SharedPropertyCard, SharedPropertyDetail } from "./types";
+import type {
+  ShareOg,
+  SharedPropertyCard,
+  SharedPropertyDetail,
+} from "./types";
 import {
   SITE_NAME,
   SITE_TAGLINE,
@@ -69,7 +73,9 @@ export function listingShareMetadata(
   const title = og?.title || item.displayTitle || "Property";
   const description =
     og?.description ||
-    [item.locationLine, item.priceLabel, "Click more"].filter(Boolean).join(" | ") ||
+    [item.locationLine, item.priceLabel, "Click more"]
+      .filter(Boolean)
+      .join(" | ") ||
     SITE_TAGLINE;
   const url = siteUrl(path, origin);
   const image = proxiedOgImageUrl(og?.imageUrl, origin);
@@ -88,14 +94,16 @@ export function listingShareMetadata(
       url,
       locale: "en_IN",
       images: hasImage
-        ? [{
-            url: image as string,
-            secureUrl: image as string,
-            width: 1200,
-            height: 630,
-            alt: title,
-            type: "image/jpeg",
-          }]
+        ? [
+            {
+              url: image as string,
+              secureUrl: image as string,
+              width: 1200,
+              height: 630,
+              alt: title,
+              type: "image/jpeg",
+            },
+          ]
         : undefined,
     },
     twitter: {
@@ -136,14 +144,16 @@ export function clientListMetadata(args: {
       url,
       locale: "en_IN",
       images: hasImage
-        ? [{
-            url: image as string,
-            secureUrl: image as string,
-            width: 1200,
-            height: 630,
-            alt: title,
-            type: "image/jpeg",
-          }]
+        ? [
+            {
+              url: image as string,
+              secureUrl: image as string,
+              width: 1200,
+              height: 630,
+              alt: title,
+              type: "image/jpeg",
+            },
+          ]
         : undefined,
     },
     twitter: {
