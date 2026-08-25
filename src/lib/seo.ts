@@ -123,11 +123,14 @@ export function clientListMetadata(args: {
   origin?: string;
 }): Metadata {
   const origin = args.origin || SITE_URL;
-  const title = args.og?.title || `${args.clientName}'s properties`;
+  const title =
+    args.og?.title ||
+    `${args.clientName}'s properties`;
   const description =
     args.og?.description ||
     `${args.total} ${args.total === 1 ? "property" : "properties"} | Click more`;
   const url = siteUrl(args.path, origin);
+  // Prefer API og.imageUrl (uploaded preview OR /api/og-avatar initials).
   const image = proxiedOgImageUrl(args.og?.imageUrl, origin);
   const hasImage = !!image;
 
