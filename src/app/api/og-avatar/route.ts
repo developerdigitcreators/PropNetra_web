@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const OG_WIDTH = 1200;
-const OG_HEIGHT = 630;
+/** Square thumb → WhatsApp compact preview (image left, details right). */
+const OG_WIDTH = 400;
+const OG_HEIGHT = 400;
 
 function initialsFromName(raw: string) {
   const parts = String(raw || "")
@@ -42,11 +43,11 @@ export async function GET(req: NextRequest) {
     </linearGradient>
   </defs>
   <rect width="100%" height="100%" fill="url(#bg)"/>
-  <circle cx="600" cy="280" r="150" fill="rgba(255,255,255,0.12)"/>
-  <text x="600" y="320" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
-        font-size="140" font-weight="700" fill="#FFFFFF">${initials}</text>
-  <text x="600" y="520" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
-        font-size="36" font-weight="600" fill="rgba(255,255,255,0.85)">PropNetra</text>
+  <circle cx="200" cy="175" r="88" fill="rgba(255,255,255,0.12)"/>
+  <text x="200" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
+        font-size="120" font-weight="700" fill="#FFFFFF">${initials}</text>
+  <text x="200" y="340" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
+        font-size="22" font-weight="600" fill="rgba(255,255,255,0.85)">PropNetra</text>
 </svg>`;
 
   try {

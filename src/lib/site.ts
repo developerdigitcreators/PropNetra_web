@@ -84,7 +84,11 @@ export function whatsappSafeImageUrl(url: string) {
 }
 
 /** Same-origin JPEG so WhatsApp does not have to follow Unsplash redirects. */
-export function proxiedOgImageUrl(url?: string | null, origin = SITE_URL) {
+export function proxiedOgImageUrl(
+  url?: string | null,
+  origin = SITE_URL,
+  opts?: { layout?: "banner" | "thumb" },
+) {
   if (!url || /^data:|^blob:/i.test(url)) return null;
   const absolute = /^https?:\/\//i.test(url)
     ? url
@@ -98,5 +102,7 @@ export function proxiedOgImageUrl(url?: string | null, origin = SITE_URL) {
   const proxyOrigin = origin.startsWith("http://") && !/localhost|127\.0\.0\.1/i.test(origin)
     ? origin.replace(/^http:/i, "https:")
     : origin;
-  return siteUrl(`/api/og-image?u=${encodeURIComponent(safe)}`, proxyOrigin);
+  const layout =
+    opts?.layout === "thumb" ? "&layout=thumb" : "";
+  return siteUrl(`/api/og-image?u=${encodeURIComponent(safe)}${layout}`, proxyOrigin);
 }

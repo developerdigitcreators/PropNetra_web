@@ -131,7 +131,8 @@ export function clientListMetadata(args: {
     `${args.total} ${args.total === 1 ? "property" : "properties"} | Click more`;
   const url = siteUrl(args.path, origin);
   // Prefer API og.imageUrl (uploaded preview OR /api/og-avatar initials).
-  const image = proxiedOgImageUrl(args.og?.imageUrl, origin);
+  // Square thumb → WhatsApp compact card (image left, details right).
+  const image = proxiedOgImageUrl(args.og?.imageUrl, origin, { layout: "thumb" });
   const hasImage = !!image;
 
   return {
@@ -151,8 +152,8 @@ export function clientListMetadata(args: {
             {
               url: image as string,
               secureUrl: image as string,
-              width: 1200,
-              height: 630,
+              width: 400,
+              height: 400,
               alt: title,
               type: "image/jpeg",
             },
@@ -160,7 +161,7 @@ export function clientListMetadata(args: {
         : undefined,
     },
     twitter: {
-      card: hasImage ? "summary_large_image" : "summary",
+      card: hasImage ? "summary" : "summary",
       title,
       description,
       images: hasImage && image ? [image] : undefined,

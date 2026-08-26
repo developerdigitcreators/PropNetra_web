@@ -32,11 +32,15 @@ function isPublicHttpsUrl(raw: string) {
   return true;
 }
 
-async function toWhatsAppJpeg(buffer: Buffer): Promise<Buffer> {
+async function toWhatsAppJpeg(
+  buffer: Buffer,
+  width: number,
+  height: number,
+): Promise<Buffer> {
   const sharp = (await import("sharp")).default;
   return sharp(buffer)
     .rotate()
-    .resize(OG_WIDTH, OG_HEIGHT, { fit: "cover", position: "centre" })
+    .resize(width, height, { fit: "cover", position: "centre" })
     .jpeg({ quality: 82, chromaSubsampling: "4:2:0", mozjpeg: true })
     .toBuffer();
 }
@@ -46,6 +50,10 @@ export async function GET(req: NextRequest) {
   if (!source || !isPublicHttpsUrl(source)) {
     return new NextResponse("Invalid image url", { status: 400 });
   }
+
+  const layout = (req.nextUrl.searchParams.get("layout") || "").toLowerCase();
+  const width = layout === "thumb" ? 400 : OG_WIDTH;
+  const height = layout === "thumb" ? 400 : OG_HEIGHT;
 
   const upstream = await fetch(source, {
     redirect: "follow",
@@ -76,7 +84,7 @@ export async function GET(req: NextRequest) {
 
   let jpeg: Buffer;
   try {
-    jpeg = await toWhatsAppJpeg(buffer);
+    jpeg = await toWhatsAppJpeg(buffer, width, height);
   } catch {
     jpeg = buffer;
   }
