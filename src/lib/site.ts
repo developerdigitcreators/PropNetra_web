@@ -104,5 +104,6 @@ export function proxiedOgImageUrl(
     : origin;
   const layout =
     opts?.layout === "thumb" ? "&layout=thumb" : "";
-  return siteUrl(`/api/og-image?u=${encodeURIComponent(safe)}${layout}`, proxyOrigin);
+  const version = opts?.layout === "thumb" ? "&v=7" : "";
+  return siteUrl(`/api/og-image?u=${encodeURIComponent(safe)}${layout}${version}`, proxyOrigin);
 }

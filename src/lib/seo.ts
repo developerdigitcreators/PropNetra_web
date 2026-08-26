@@ -152,8 +152,8 @@ export function clientListMetadata(args: {
             {
               url: image as string,
               secureUrl: image as string,
-              width: 400,
-              height: 400,
+              width: 200,
+              height: 200,
               alt: title,
               type: "image/jpeg",
             },

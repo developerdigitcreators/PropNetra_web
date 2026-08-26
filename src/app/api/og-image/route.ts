@@ -4,8 +4,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_BYTES = 8 * 1024 * 1024;
-const OG_WIDTH = 1200;
-const OG_HEIGHT = 630;
+const BANNER_W = 1200;
+const BANNER_H = 630;
+const THUMB_EDGE = 200;
 
 function isPublicHttpsUrl(raw: string) {
   let parsed: URL;
@@ -32,16 +33,26 @@ function isPublicHttpsUrl(raw: string) {
   return true;
 }
 
-async function toWhatsAppJpeg(
-  buffer: Buffer,
-  width: number,
-  height: number,
-): Promise<Buffer> {
+async function toJpeg(buffer: Buffer, width: number, height: number): Promise<Buffer> {
   const sharp = (await import("sharp")).default;
   return sharp(buffer)
     .rotate()
     .resize(width, height, { fit: "cover", position: "centre" })
-    .jpeg({ quality: 82, chromaSubsampling: "4:2:0", mozjpeg: true })
+    .jpeg({ quality: 78, chromaSubsampling: "4:2:0", mozjpeg: true })
+    .toBuffer();
+}
+
+async function solidThumb(): Promise<Buffer> {
+  const sharp = (await import("sharp")).default;
+  return sharp({
+    create: {
+      width: THUMB_EDGE,
+      height: THUMB_EDGE,
+      channels: 3,
+      background: { r: 15, g: 118, b: 110 },
+    },
+  })
+    .jpeg({ quality: 70 })
     .toBuffer();
 }
 
@@ -52,8 +63,9 @@ export async function GET(req: NextRequest) {
   }
 
   const layout = (req.nextUrl.searchParams.get("layout") || "").toLowerCase();
-  const width = layout === "thumb" ? 400 : OG_WIDTH;
-  const height = layout === "thumb" ? 400 : OG_HEIGHT;
+  const isThumb = layout === "thumb";
+  const width = isThumb ? THUMB_EDGE : BANNER_W;
+  const height = isThumb ? THUMB_EDGE : BANNER_H;
 
   const upstream = await fetch(source, {
     redirect: "follow",
@@ -66,6 +78,17 @@ export async function GET(req: NextRequest) {
   });
 
   if (!upstream.ok || !upstream.body) {
+    if (isThumb) {
+      const fallback = await solidThumb();
+      return new NextResponse(Uint8Array.from(fallback), {
+        status: 200,
+        headers: {
+          "Content-Type": "image/jpeg",
+          "Cache-Control": "public, max-age=300",
+          "Content-Length": String(fallback.length),
+        },
+      });
+    }
     return new NextResponse("Image not found", { status: 404 });
   }
 
@@ -84,18 +107,18 @@ export async function GET(req: NextRequest) {
 
   let jpeg: Buffer;
   try {
-    jpeg = await toWhatsAppJpeg(buffer, width, height);
+    jpeg = await toJpeg(buffer, width, height);
   } catch {
-    jpeg = buffer;
+    jpeg = isThumb ? await solidThumb() : buffer;
   }
 
   return new NextResponse(Uint8Array.from(jpeg), {
     status: 200,
     headers: {
-      "Content-Type": jpeg === buffer && contentType.startsWith("image/")
-        ? (contentType === "image/jpg" ? "image/jpeg" : contentType)
-        : "image/jpeg",
-      "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      "Content-Type": "image/jpeg",
+      "Cache-Control": isThumb
+        ? "public, max-age=3600, stale-while-revalidate=86400"
+        : "public, max-age=86400, stale-while-revalidate=604800",
       "Content-Length": String(jpeg.length),
     },
   });
