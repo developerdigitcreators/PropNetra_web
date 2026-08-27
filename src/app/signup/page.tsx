@@ -8,10 +8,21 @@ import './signup.css';
 import Testimonials from '@/components/Testimonials';
 import DeveloperLogos from '@/components/DeveloperLogos';
 import MiniBanner from '@/components/MiniBanner';
+import { readReferralCodeFromBrowser, persistReferralCode } from '@/lib/referral';
+
+const PLAY_STORE =
+    process.env.NEXT_PUBLIC_PLAY_STORE_URL ||
+    'https://play.google.com/store/apps/details?id=com.propnetra.app';
+const APP_STORE =
+    process.env.NEXT_PUBLIC_APP_STORE_URL ||
+    'https://apps.apple.com/app/propnetra/id0000000000';
 
 export default function SignUpPage() {
     const [currentStep, setCurrentStep] = useState(1);
     const [otpSent, setOtpSent] = useState(false);
+    const [done, setDone] = useState(false);
+    /** Hidden referral — never shown in UI; sent as referId on auth step2 when wired. */
+    const [referId, setReferId] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -38,6 +49,14 @@ export default function SignUpPage() {
     const visualRef = useRef(null);
 
     useEffect(() => {
+        const code = readReferralCodeFromBrowser();
+        if (code) {
+            setReferId(code);
+            persistReferralCode(code);
+        }
+    }, []);
+
+    useEffect(() => {
         const tl = gsap.timeline();
         tl.fromTo(cardRef.current,
             { y: 30, opacity: 0 },
@@ -54,7 +73,7 @@ export default function SignUpPage() {
             { opacity: 0, x: -20 },
             { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }
         );
-    }, [currentStep, otpSent]);
+    }, [currentStep, otpSent, done]);
 
     const handleNext = () => {
         if (currentStep < 5) setCurrentStep(currentStep + 1);
@@ -62,6 +81,11 @@ export default function SignUpPage() {
 
     const handleBack = () => {
         if (currentStep > 1) setCurrentStep(currentStep - 1);
+    };
+
+    const handleComplete = () => {
+        if (referId) persistReferralCode(referId);
+        setDone(true);
     };
 
     const updateFormData = (field, value) => {
@@ -492,11 +516,34 @@ export default function SignUpPage() {
                             </div>
 
                             <div className="stepper-body">
-                                {renderStep()}
+                                {/* Hidden refer id — never visible; mirrors app silent capture */}
+                                <input type="hidden" name="referId" value={referId || ''} readOnly />
+                                {done ? (
+                                    <div className="step-content" style={{ textAlign: 'center', padding: '24px 8px' }}>
+                                        <h2 style={{ marginBottom: 12 }}>You&apos;re almost there</h2>
+                                        <p style={{ opacity: 0.8, marginBottom: 20 }}>
+                                            Download the PropNetra app to finish onboarding
+                                            {referId ? ' — your invite stays saved on this device.' : '.'}
+                                        </p>
+                                        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                                            <a className="next-step-btn" href={PLAY_STORE} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                                                Google Play
+                                            </a>
+                                            <a className="next-step-btn" href={APP_STORE} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                                                App Store
+                                            </a>
+                                        </div>
+                                        <p style={{ marginTop: 16, fontSize: 14 }}>
+                                            <Link href="/signin">Or sign in on web</Link>
+                                        </p>
+                                    </div>
+                                ) : (
+                                    renderStep()
+                                )}
                             </div>
 
                             {/* Standard Footer for Steps 2-5 */}
-                            {currentStep > 1 && (
+                            {currentStep > 1 && !done && (
                                 <div className="stepper-footer">
                                     <button
                                         className="back-step-btn"
@@ -513,7 +560,7 @@ export default function SignUpPage() {
                                             </svg>
                                         </button>
                                     ) : (
-                                        <button className="complete-step-btn" onClick={() => router.push('/signin')}>
+                                        <button className="complete-step-btn" onClick={handleComplete}>
                                             Complete Registration
                                         </button>
                                     )}

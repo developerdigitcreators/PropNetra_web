@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAMID.com.propnetra.app",
+        "paths": ["/r/*", "/r/*/", "/signup", "/signup?*"]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["TEAMID.com.propnetra.app"]
+  }
+}
