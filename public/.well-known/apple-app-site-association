@@ -3,12 +3,12 @@
     "apps": [],
     "details": [
       {
-        "appID": "TEAMID.com.propnetra.app",
+        "appID": "TEAMID.com.propnetra",
         "paths": ["/r/*", "/r/*/", "/signup", "/signup?*"]
       }
     ]
   },
   "webcredentials": {
-    "apps": ["TEAMID.com.propnetra.app"]
+    "apps": ["TEAMID.com.propnetra"]
   }
 }

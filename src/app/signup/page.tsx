@@ -12,7 +12,7 @@ import { readReferralCodeFromBrowser, persistReferralCode } from '@/lib/referral
 
 const PLAY_STORE =
     process.env.NEXT_PUBLIC_PLAY_STORE_URL ||
-    'https://play.google.com/store/apps/details?id=com.propnetra.app';
+    'https://play.google.com/store/apps/details?id=com.propnetra';
 const APP_STORE =
     process.env.NEXT_PUBLIC_APP_STORE_URL ||
     'https://apps.apple.com/app/propnetra/id0000000000';
