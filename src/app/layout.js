@@ -6,12 +6,12 @@ export const metadata = {
   description: "Luxury architectural design and building services.",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
-      { url: "/apple-touch-icon.png", sizes: "192x192", type: "image/png" },
-      { url: "/logo-cropped.png", type: "image/png" },
+      { url: "/favicon.ico?v=9", sizes: "48x48", type: "image/x-icon" },
+      { url: "/logo-cropped.png?v=9", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=9", sizes: "192x192", type: "image/png" },
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "192x192", type: "image/png" }],
-    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-touch-icon.png?v=9", sizes: "180x180", type: "image/png" }],
+    shortcut: "/favicon.ico?v=9",
   },
 };
 

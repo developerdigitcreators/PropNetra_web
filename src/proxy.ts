@@ -64,7 +64,9 @@ function handleShareHost(request: NextRequest) {
     pathname.startsWith("/apple-icon") ||
     pathname === "/apple-touch-icon.png" ||
     pathname === "/apple-touch-icon-precomposed.png" ||
+    pathname === "/brand-icon-192.png" ||
     pathname === "/favicon.ico" ||
+    pathname === "/favicon.png" ||
     pathname === "/logo-cropped.png"
   ) {
     return NextResponse.next();

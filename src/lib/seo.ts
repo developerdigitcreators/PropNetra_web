@@ -8,6 +8,7 @@ import {
   SITE_NAME,
   SITE_TAGLINE,
   SITE_URL,
+  SITE_ICON_VERSION,
   absoluteImageUrl,
   proxiedOgImageUrl,
   siteIconUrl,
@@ -17,16 +18,16 @@ import {
 
 function siteIconMetadata(origin = SITE_URL) {
   const icon = siteIconUrl(origin);
-  const logo = siteLogoUrl(origin);
-  const favicon = siteUrl("/favicon.ico", origin);
+  const favicon = siteUrl(`/favicon.ico?${SITE_ICON_VERSION}`, origin);
+  const apple = siteUrl(`/apple-touch-icon.png?${SITE_ICON_VERSION}`, origin);
   return {
     icons: {
       icon: [
         { url: favicon, sizes: "48x48", type: "image/x-icon" },
-        { url: icon, sizes: "192x192", type: "image/png" },
-        { url: logo, type: "image/png" },
+        { url: icon, type: "image/png" },
+        { url: apple, sizes: "192x192", type: "image/png" },
       ],
-      apple: [{ url: icon, sizes: "192x192", type: "image/png" }],
+      apple: [{ url: apple, sizes: "180x180", type: "image/png" }],
       shortcut: favicon,
     },
     other: {
