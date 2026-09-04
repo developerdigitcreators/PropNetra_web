@@ -55,8 +55,16 @@ export function fetchSharedListing(
   );
 }
 
-export function fetchPublicListing(listingId: string, showPrice = false) {
+export function fetchPublicListing(
+  listingId: string,
+  showPrice = false,
+  sharerCode?: string | null,
+) {
+  const by = String(sharerCode || "").trim();
+  const path = by
+    ? `/share/listings/${listingId}/u/${encodeURIComponent(by)}`
+    : `/share/listings/${listingId}`;
   return getJson<SharedSingleListingResponse>(
-    `/share/listings/${listingId}?price=${showPrice ? "1" : "0"}`,
+    `${path}?price=${showPrice ? "1" : "0"}`,
   );
 }

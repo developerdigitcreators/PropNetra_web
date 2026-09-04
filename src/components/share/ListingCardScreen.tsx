@@ -6,9 +6,14 @@ import { withPriceQuery } from "@/lib/price";
 import { listingJsonLd, listingShareMetadata, organizationJsonLd } from "@/lib/seo";
 import { resolveSiteUrl } from "@/lib/site";
 
-export async function listingCardMetadata(listingId: string, showPrice: boolean, path: string) {
+export async function listingCardMetadata(
+  listingId: string,
+  showPrice: boolean,
+  path: string,
+  sharerCode?: string | null,
+) {
   try {
-    const data = await fetchPublicListing(listingId, showPrice);
+    const data = await fetchPublicListing(listingId, showPrice, sharerCode);
     return listingShareMetadata(
       data.item,
       withPriceQuery(path, showPrice),
@@ -24,13 +29,15 @@ export async function ListingCardScreen({
   listingId,
   showPrice,
   path,
+  sharerCode,
 }: {
   listingId: string;
   showPrice: boolean;
   path: string;
+  sharerCode?: string | null;
 }) {
   const origin = await resolveSiteUrl();
-  const data = await fetchPublicListing(listingId, showPrice);
+  const data = await fetchPublicListing(listingId, showPrice, sharerCode);
   const sharePath = withPriceQuery(path, showPrice);
 
   return (
