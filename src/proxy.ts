@@ -59,6 +59,18 @@ function handleShareHost(request: NextRequest) {
   }
 
   if (
+    pathname === "/icon" ||
+    pathname.startsWith("/icon.") ||
+    pathname.startsWith("/apple-icon") ||
+    pathname === "/apple-touch-icon.png" ||
+    pathname === "/apple-touch-icon-precomposed.png" ||
+    pathname === "/favicon.ico" ||
+    pathname === "/logo-cropped.png"
+  ) {
+    return NextResponse.next();
+  }
+
+  if (
     pathname.startsWith("/clients/") ||
     pathname.startsWith("/listings/") ||
     pathname === "/clients" ||

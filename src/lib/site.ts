@@ -4,6 +4,8 @@ import { DEFAULT_SHARE_DOMAIN } from "./domains";
 export const SITE_NAME = "PropNetra";
 export const SITE_TAGLINE = "Property listings shared on PropNetra";
 export const SITE_LOGO_PATH = "/logo-cropped.png";
+/** Square 192x192 PNG WhatsApp shows beside the domain in link previews. */
+export const SITE_ICON_PATH = "/apple-touch-icon.png";
 
 export const SITE_URL = fallbackSiteUrl();
 
@@ -54,6 +56,10 @@ export function siteUrl(path = "/", origin = SITE_URL) {
 
 export function siteLogoUrl(origin = SITE_URL) {
   return siteUrl(SITE_LOGO_PATH, origin);
+}
+
+export function siteIconUrl(origin = SITE_URL) {
+  return siteUrl(SITE_ICON_PATH, origin);
 }
 
 export function absoluteImageUrl(url?: string | null, origin = SITE_URL) {

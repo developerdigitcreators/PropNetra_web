@@ -5,9 +5,13 @@ export const metadata = {
   title: "PropNetra - High-End Residential Design",
   description: "Luxury architectural design and building services.",
   icons: {
-    icon: [{ url: "/logo-cropped.png", type: "image/png" }],
-    apple: [{ url: "/logo-cropped.png", type: "image/png" }],
-    shortcut: "/logo-cropped.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/apple-touch-icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/logo-cropped.png", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "192x192", type: "image/png" }],
+    shortcut: "/favicon.ico",
   },
 };
 

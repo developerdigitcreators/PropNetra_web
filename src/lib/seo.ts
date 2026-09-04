@@ -7,13 +7,33 @@ import type {
 import {
   SITE_NAME,
   SITE_TAGLINE,
-  SITE_LOGO_PATH,
   SITE_URL,
   absoluteImageUrl,
   proxiedOgImageUrl,
+  siteIconUrl,
   siteLogoUrl,
   siteUrl,
 } from "./site";
+
+function siteIconMetadata(origin = SITE_URL) {
+  const icon = siteIconUrl(origin);
+  const logo = siteLogoUrl(origin);
+  const favicon = siteUrl("/favicon.ico", origin);
+  return {
+    icons: {
+      icon: [
+        { url: favicon, sizes: "48x48", type: "image/x-icon" },
+        { url: icon, sizes: "192x192", type: "image/png" },
+        { url: logo, type: "image/png" },
+      ],
+      apple: [{ url: icon, sizes: "192x192", type: "image/png" }],
+      shortcut: favicon,
+    },
+    other: {
+      "og:logo": icon,
+    },
+  };
+}
 
 function listingDescription(item: SharedPropertyCard) {
   return [
@@ -28,7 +48,6 @@ function listingDescription(item: SharedPropertyCard) {
 }
 
 export function baseMetadata(origin = SITE_URL): Metadata {
-  const logo = siteLogoUrl(origin);
   return {
     metadataBase: new URL(origin),
     title: {
@@ -39,11 +58,7 @@ export function baseMetadata(origin = SITE_URL): Metadata {
     applicationName: SITE_NAME,
     authors: [{ name: SITE_NAME, url: origin }],
     keywords: ["PropNetra", "property", "real estate", "India"],
-    icons: {
-      icon: [{ url: SITE_LOGO_PATH, type: "image/png" }],
-      apple: [{ url: SITE_LOGO_PATH, type: "image/png" }],
-      shortcut: SITE_LOGO_PATH,
-    },
+    ...siteIconMetadata(origin),
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -57,9 +72,6 @@ export function baseMetadata(origin = SITE_URL): Metadata {
       card: "summary",
       title: SITE_NAME,
       description: SITE_TAGLINE,
-    },
-    other: {
-      "og:logo": logo,
     },
   };
 }
@@ -86,6 +98,7 @@ export function listingShareMetadata(
     description,
     metadataBase: new URL(origin),
     alternates: { canonical: url },
+    ...siteIconMetadata(origin),
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
@@ -140,6 +153,7 @@ export function clientListMetadata(args: {
     description,
     metadataBase: new URL(origin),
     alternates: { canonical: url },
+    ...siteIconMetadata(origin),
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
