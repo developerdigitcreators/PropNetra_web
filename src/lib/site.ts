@@ -116,7 +116,7 @@ export function proxiedOgImageUrl(
       ? origin.replace(/^http:/i, "https:")
       : origin;
   const layout = opts?.layout === "thumb" ? "&layout=thumb" : "";
-  const version = opts?.layout === "thumb" ? "&v=7" : "";
+  const version = opts?.layout === "thumb" ? "&v=8" : "";
   return siteUrl(
     `/api/og-image?u=${encodeURIComponent(safe)}${layout}${version}`,
     proxyOrigin,

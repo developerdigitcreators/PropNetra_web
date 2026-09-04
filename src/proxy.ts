@@ -54,7 +54,11 @@ function handleShareHost(request: NextRequest) {
     return NextResponse.rewrite(url, { request: { headers } });
   }
 
-  if (pathname.startsWith("/share") || pathname.startsWith("/api/og-image")) {
+  if (
+    pathname.startsWith("/share") ||
+    pathname.startsWith("/api/og-image") ||
+    pathname.startsWith("/api/og-avatar")
+  ) {
     return withShareHeader(request);
   }
 
@@ -106,7 +110,11 @@ export function proxy(request: NextRequest) {
 
   if (isPropnetraHost(host)) {
     const { pathname } = request.nextUrl;
-    if (isBrokerListingPath(pathname) || pathname.startsWith("/api/og-image")) {
+    if (
+      isBrokerListingPath(pathname) ||
+      pathname.startsWith("/api/og-image") ||
+      pathname.startsWith("/api/og-avatar")
+    ) {
       return withShareHeader(request);
     }
     if (isShareAppPath(pathname) || isAgentPath(pathname)) {

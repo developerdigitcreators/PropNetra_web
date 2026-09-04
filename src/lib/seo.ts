@@ -146,7 +146,15 @@ export function clientListMetadata(args: {
   const url = siteUrl(args.path, origin);
   // Prefer API og.imageUrl (uploaded preview OR /api/og-avatar initials).
   // Square thumb → WhatsApp compact card (image left, details right).
-  const image = proxiedOgImageUrl(args.og?.imageUrl, origin, { layout: "thumb" });
+  // Initials avatar is already a same-origin 200×200 JPEG — use it directly
+  // so WhatsApp does not depend on a second /api/og-image fetch hop.
+  const rawImage = String(args.og?.imageUrl || "").trim();
+  const isOgAvatar =
+    /^https?:\/\//i.test(rawImage) &&
+    /\/api\/og-avatar(?:\?|$)/i.test(rawImage);
+  const image = isOgAvatar
+    ? rawImage
+    : proxiedOgImageUrl(rawImage, origin, { layout: "thumb" });
   const hasImage = !!image;
 
   return {
