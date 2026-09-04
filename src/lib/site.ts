@@ -3,7 +3,7 @@ import { DEFAULT_SHARE_DOMAIN } from "./domains";
 
 export const SITE_NAME = "PropNetra";
 export const SITE_TAGLINE = "Property listings shared on PropNetra";
-export const SITE_LOGO_PATH = "/logo.png";
+export const SITE_LOGO_PATH = "/logo-cropped.png";
 
 export const SITE_URL = fallbackSiteUrl();
 
@@ -95,15 +95,22 @@ export function proxiedOgImageUrl(
     : url.startsWith("/")
       ? siteUrl(url, origin)
       : url;
-  if (!absolute || !/^https?:\/\//i.test(absolute) || absolute === siteLogoUrl(origin)) {
+  if (
+    !absolute ||
+    !/^https?:\/\//i.test(absolute) ||
+    absolute === siteLogoUrl(origin)
+  ) {
     return null;
   }
   const safe = whatsappSafeImageUrl(absolute);
-  const proxyOrigin = origin.startsWith("http://") && !/localhost|127\.0\.0\.1/i.test(origin)
-    ? origin.replace(/^http:/i, "https:")
-    : origin;
-  const layout =
-    opts?.layout === "thumb" ? "&layout=thumb" : "";
+  const proxyOrigin =
+    origin.startsWith("http://") && !/localhost|127\.0\.0\.1/i.test(origin)
+      ? origin.replace(/^http:/i, "https:")
+      : origin;
+  const layout = opts?.layout === "thumb" ? "&layout=thumb" : "";
   const version = opts?.layout === "thumb" ? "&v=7" : "";
-  return siteUrl(`/api/og-image?u=${encodeURIComponent(safe)}${layout}${version}`, proxyOrigin);
+  return siteUrl(
+    `/api/og-image?u=${encodeURIComponent(safe)}${layout}${version}`,
+    proxyOrigin,
+  );
 }
