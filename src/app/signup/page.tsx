@@ -9,6 +9,7 @@ import Testimonials from '@/components/Testimonials';
 import DeveloperLogos from '@/components/DeveloperLogos';
 import MiniBanner from '@/components/MiniBanner';
 import { readReferralCodeFromBrowser, persistReferralCode } from '@/lib/referral';
+import { fetchSignupCities, type SignupCity } from '@/lib/auth-signup';
 
 const PLAY_STORE =
     process.env.NEXT_PUBLIC_PLAY_STORE_URL ||
@@ -23,11 +24,14 @@ export default function SignUpPage() {
     const [done, setDone] = useState(false);
     /** Hidden referral — never shown in UI; sent as referId on auth step2 when wired. */
     const [referId, setReferId] = useState<string | null>(null);
+    const [cities, setCities] = useState<SignupCity[]>([]);
+    const [citiesLoading, setCitiesLoading] = useState(true);
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         otp: ['', '', '', ''],
         companyName: '',
+        companyRole: '',
         city: '',
         role: '',
         hasRera: 'no',
@@ -54,6 +58,24 @@ export default function SignUpPage() {
             setReferId(code);
             persistReferralCode(code);
         }
+    }, []);
+
+    useEffect(() => {
+        let cancelled = false;
+        setCitiesLoading(true);
+        fetchSignupCities()
+            .then((list) => {
+                if (!cancelled) setCities(list);
+            })
+            .catch(() => {
+                if (!cancelled) setCities([]);
+            })
+            .finally(() => {
+                if (!cancelled) setCitiesLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     useEffect(() => {
@@ -227,7 +249,7 @@ export default function SignUpPage() {
                         <h2 className="step-title">Complete Profile</h2>
                         <p className="step-desc">Tell us more about your business</p>
                         <div className="form-group">
-                            <label>Company Name</label>
+                            <label>Organization Name *</label>
                             <div className="input-wrapper">
                                 <span className="input-icon">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -236,10 +258,37 @@ export default function SignUpPage() {
                                 </span>
                                 <input
                                     type="text"
-                                    placeholder="PropNetra Pvt Ltd"
+                                    placeholder="e.g. Sharma Realty"
                                     value={formData.companyName}
                                     onChange={(e) => updateFormData('companyName', e.target.value)}
                                 />
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label>Your Role in Company *</label>
+                            <div className="radio-group-simple" style={{ marginTop: 8 }}>
+                                <label className="radio-label">
+                                    <input
+                                        type="radio"
+                                        name="companyRole"
+                                        value="id_owner"
+                                        checked={formData.companyRole === 'id_owner'}
+                                        onChange={(e) => updateFormData('companyRole', e.target.value)}
+                                    />
+                                    <span className="radio-custom"></span>
+                                    ID Owner
+                                </label>
+                                <label className="radio-label">
+                                    <input
+                                        type="radio"
+                                        name="companyRole"
+                                        value="team_member"
+                                        checked={formData.companyRole === 'team_member'}
+                                        onChange={(e) => updateFormData('companyRole', e.target.value)}
+                                    />
+                                    <span className="radio-custom"></span>
+                                    Team Member
+                                </label>
                             </div>
                         </div>
                         <div className="form-row">
@@ -249,11 +298,16 @@ export default function SignUpPage() {
                                     value={formData.city}
                                     onChange={(e) => updateFormData('city', e.target.value)}
                                     className="custom-select"
+                                    disabled={citiesLoading}
                                 >
-                                    <option value="">Select your city</option>
-                                    <option value="Delhi">Delhi</option>
-                                    <option value="Mumbai">Mumbai</option>
-                                    <option value="Bangalore">Bangalore</option>
+                                    <option value="">
+                                        {citiesLoading ? 'Loading cities…' : 'Select your city'}
+                                    </option>
+                                    {cities.map((city) => (
+                                        <option key={city.id} value={city.name}>
+                                            {city.name}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="form-group">

@@ -60,3 +60,34 @@ export async function signupComplete(payload: {
 }) {
   return postJson('/auth/signup/complete', payload);
 }
+
+export type SignupCity = { id: string; name: string };
+
+/** Active cities from admin location catalog (public). */
+export async function fetchSignupCities(): Promise<SignupCity[]> {
+  const res = await fetch(`${apiBase()}/cities`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'ngrok-skip-browser-warning': '1',
+    },
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(json?.error?.message || `Failed to load cities (${res.status})`);
+  }
+  const payload = json?.data ?? json;
+  const raw: unknown[] = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.items)
+      ? payload.items
+      : [];
+  return raw
+    .map((row: any): SignupCity | null => {
+      const id = String(row?.id ?? row?.cityId ?? '').trim();
+      const name = String(row?.name ?? row?.cityName ?? '').trim();
+      if (!id || !name) return null;
+      return { id, name };
+    })
+    .filter((row): row is SignupCity => row != null);
+}
