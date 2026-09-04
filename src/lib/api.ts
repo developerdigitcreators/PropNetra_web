@@ -40,8 +40,11 @@ async function getJson<T>(path: string): Promise<T> {
 
 export function fetchSharedList(clientId: string, showPrice = false, limit = 100) {
   const safeLimit = Math.min(100, Math.max(1, Number(limit) || 100));
+  // Do not send `price` — ClientListingsQueryDto forbids unknown fields and
+  // public share uses the client's stored show_price flag.
+  void showPrice;
   return getJson<SharedListResponse>(
-    `/share/clients/${clientId}?limit=${safeLimit}&price=${showPrice ? "1" : "0"}`,
+    `/share/clients/${clientId}?limit=${safeLimit}`,
   );
 }
 
@@ -50,8 +53,9 @@ export function fetchSharedListing(
   listingId: string,
   showPrice = false,
 ) {
+  void showPrice;
   return getJson<SharedDetailResponse>(
-    `/share/clients/${clientId}/listings/${listingId}?price=${showPrice ? "1" : "0"}`,
+    `/share/clients/${clientId}/listings/${listingId}`,
   );
 }
 
@@ -60,11 +64,10 @@ export function fetchPublicListing(
   showPrice = false,
   sharerCode?: string | null,
 ) {
+  void showPrice;
   const by = String(sharerCode || "").trim();
   const path = by
     ? `/share/listings/${listingId}/u/${encodeURIComponent(by)}`
     : `/share/listings/${listingId}`;
-  return getJson<SharedSingleListingResponse>(
-    `${path}?price=${showPrice ? "1" : "0"}`,
-  );
+  return getJson<SharedSingleListingResponse>(path);
 }
