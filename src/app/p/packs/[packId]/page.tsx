@@ -24,9 +24,7 @@ export default async function BrokerPackPage({ params }: PageProps) {
     <PackListScreen
       packId={packId}
       path={`/k/${packId}`}
-      listingPath={(item) =>
-        `/p/${encodeURIComponent(item.shareCode || item.id)}`
-      }
+      listingHrefPrefix="/p"
       title="Shared Properties"
     />
   );

@@ -24,9 +24,7 @@ export default async function SharePackPage({ params }: PageProps) {
     <PackListScreen
       packId={packId}
       path={`/k/${packId}`}
-      listingPath={(item) =>
-        `/l/${encodeURIComponent(item.shareCode || item.id)}`
-      }
+      listingHrefPrefix="/l"
     />
   );
 }

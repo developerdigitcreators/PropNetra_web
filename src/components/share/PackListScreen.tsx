@@ -5,7 +5,6 @@ import { JsonLd } from "@/components/JsonLd";
 import { fetchSharePack } from "@/lib/api";
 import { clientListMetadata, organizationJsonLd } from "@/lib/seo";
 import { resolveSiteUrl } from "@/lib/site";
-import type { SharedPropertyCard } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +12,10 @@ type PackScreenProps = {
   packId: string;
   /** Public path used for canonical + OG url (client or broker). */
   path: string;
-  /** How card taps open a single listing. */
-  listingPath: (item: SharedPropertyCard) => string;
+  /** Card link prefix: /l (client host) or /p (broker). */
+  listingHrefPrefix: "/l" | "/p";
+  /** Optional sharer segment appended after listing id. */
+  listingHrefSuffix?: string;
   title?: string;
 };
 
@@ -45,7 +46,8 @@ export async function sharePackMetadata(
 export async function PackListScreen({
   packId,
   path: _path,
-  listingPath,
+  listingHrefPrefix,
+  listingHrefSuffix = "",
   title = "Shared Properties",
 }: PackScreenProps) {
   void _path;
@@ -80,7 +82,8 @@ export async function PackListScreen({
         clientId={packId}
         groups={groups}
         showPrice={data.showPrice !== false}
-        hrefForItem={(item) => listingPath(item)}
+        hrefPrefix={listingHrefPrefix}
+        hrefSuffix={listingHrefSuffix}
       />
     </AppShell>
   );

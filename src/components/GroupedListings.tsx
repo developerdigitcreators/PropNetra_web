@@ -9,12 +9,15 @@ export function GroupedListings({
   clientId,
   groups,
   showPrice = false,
-  hrefForItem,
+  hrefPrefix,
+  hrefSuffix = "",
 }: {
   clientId: string;
   groups: ListingGroup[];
   showPrice?: boolean;
-  hrefForItem?: (item: ListingGroup["items"][number]) => string;
+  /** When set, cards link to `${hrefPrefix}/{shareCode|id}${hrefSuffix}` (e.g. /l, /p). */
+  hrefPrefix?: string;
+  hrefSuffix?: string;
 }) {
   const visible = useMemo(
     () => groups.filter((group) => group.count > 0),
@@ -62,20 +65,13 @@ export function GroupedListings({
       {selected?.items.length ? (
         <div className="flex flex-col gap-4">
           <h2 className="text-[16px] font-extrabold text-[#111]">{selected.label}</h2>
-          {selected.items.map((item) => (
-            <PropertyCard
-              key={item.id}
-              item={item}
-              href={
-                hrefForItem
-                  ? hrefForItem(item)
-                  : withPriceQuery(
-                      `/c/${clientId}/${item.shareCode || item.id}`,
-                      showPrice,
-                    )
-              }
-            />
-          ))}
+          {selected.items.map((item) => {
+            const key = encodeURIComponent(item.shareCode || item.id);
+            const href = hrefPrefix
+              ? `${hrefPrefix}/${key}${hrefSuffix || ""}`
+              : withPriceQuery(`/c/${clientId}/${key}`, showPrice);
+            return <PropertyCard key={item.id} item={item} href={href} />;
+          })}
         </div>
       ) : (
         <p className="rounded-2xl bg-white px-4 py-8 text-center text-[14px] text-[#8b8b8b]">
