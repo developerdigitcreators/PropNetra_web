@@ -14,7 +14,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { packId } = await params;
-  return sharePackMetadata(packId, `/share/packs/${packId}`);
+  return sharePackMetadata(packId, `/k/${packId}`);
 }
 
 /** Client multi-listing WhatsApp pack on the share host. */
@@ -23,9 +23,9 @@ export default async function SharePackPage({ params }: PageProps) {
   return (
     <PackListScreen
       packId={packId}
-      path={`/share/packs/${packId}`}
+      path={`/k/${packId}`}
       listingPath={(item) =>
-        `/share/listings/${encodeURIComponent(item.shareCode || item.id)}`
+        `/l/${encodeURIComponent(item.shareCode || item.id)}`
       }
     />
   );

@@ -14,7 +14,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { packId } = await params;
-  return sharePackMetadata(packId, `/p/packs/${packId}`);
+  return sharePackMetadata(packId, `/k/${packId}`);
 }
 
 /** Broker multi-listing WhatsApp pack on propnetra.devsol.in. */
@@ -23,7 +23,7 @@ export default async function BrokerPackPage({ params }: PageProps) {
   return (
     <PackListScreen
       packId={packId}
-      path={`/p/packs/${packId}`}
+      path={`/k/${packId}`}
       listingPath={(item) =>
         `/p/${encodeURIComponent(item.shareCode || item.id)}`
       }

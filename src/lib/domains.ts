@@ -107,9 +107,14 @@ export function isAgentPath(pathname: string) {
   return pathname === "/agent" || pathname.startsWith("/agent/");
 }
 
-/** WhatsApp listing card for brokers, on the live PropNetra domain only. */
+/** WhatsApp listing / pack cards for brokers, on the live PropNetra domain only. */
 export function isBrokerListingPath(pathname: string) {
-  return pathname === "/p" || pathname.startsWith("/p/");
+  return (
+    pathname === "/p" ||
+    pathname.startsWith("/p/") ||
+    pathname === "/k" ||
+    pathname.startsWith("/k/")
+  );
 }
 
 /** WhatsApp card / share microsite paths (the merged project). */
@@ -117,6 +122,12 @@ export function isShareAppPath(pathname: string) {
   return (
     pathname === "/share" ||
     pathname.startsWith("/share/") ||
+    pathname === "/l" ||
+    pathname.startsWith("/l/") ||
+    pathname === "/c" ||
+    pathname.startsWith("/c/") ||
+    pathname === "/k" ||
+    pathname.startsWith("/k/") ||
     pathname === "/clients" ||
     pathname.startsWith("/clients/") ||
     pathname === "/listings" ||

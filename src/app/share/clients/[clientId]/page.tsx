@@ -33,7 +33,7 @@ export async function generateMetadata({
     return clientListMetadata({
       clientName: data.clientName,
       total: data.total,
-      path: withPriceQuery(`/share/clients/${clientId}`, showPrice),
+      path: withPriceQuery(`/c/${clientId}`, showPrice),
       og: data.og,
       origin,
     });

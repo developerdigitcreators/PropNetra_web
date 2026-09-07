@@ -15,7 +15,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { listingId } = await params;
   const showPrice = parseShowPrice((await searchParams).price);
-  return listingCardMetadata(listingId, showPrice, `/share/listings/${listingId}`);
+  return listingCardMetadata(listingId, showPrice, `/l/${listingId}`);
 }
 
 export default async function SharedSingleListingPage({ params, searchParams }: PageProps) {
@@ -25,7 +25,7 @@ export default async function SharedSingleListingPage({ params, searchParams }: 
     <ListingCardScreen
       listingId={listingId}
       showPrice={showPrice}
-      path={`/share/listings/${listingId}`}
+      path={`/l/${listingId}`}
     />
   );
 }

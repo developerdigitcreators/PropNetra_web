@@ -33,14 +33,41 @@ function rewriteToShare(request: NextRequest, pathname = "/share") {
   return NextResponse.rewrite(url, { request: { headers } });
 }
 
+/** Short public paths → existing /share/... page tree. */
+function rewriteShortSharePath(pathname: string): string | null {
+  let m = pathname.match(/^\/l\/([^/]+)\/([^/]+)\/?$/);
+  if (m) return `/share/listings/${m[1]}/u/${m[2]}`;
+  m = pathname.match(/^\/l\/([^/]+)\/?$/);
+  if (m) return `/share/listings/${m[1]}`;
+
+  m = pathname.match(/^\/c\/([^/]+)\/([^/]+)\/?$/);
+  if (m) return `/share/clients/${m[1]}/${m[2]}`;
+  m = pathname.match(/^\/c\/([^/]+)\/?$/);
+  if (m) return `/share/clients/${m[1]}`;
+
+  m = pathname.match(/^\/k\/([^/]+)\/?$/);
+  if (m) return `/share/packs/${m[1]}`;
+
+  return null;
+}
+
+/** Broker short paths → /p/... page tree. */
+function rewriteShortBrokerPath(pathname: string): string | null {
+  let m = pathname.match(/^\/k\/([^/]+)\/([^/]+)\/?$/);
+  if (m) return `/p/packs/${m[1]}/u/${m[2]}`;
+  m = pathname.match(/^\/k\/([^/]+)\/?$/);
+  if (m) return `/p/packs/${m[1]}`;
+
+  // /p/:code/:sharer (drop legacy /u/) — not /p/packs/...
+  m = pathname.match(/^\/p\/(?!packs(?:\/|$))([^/]+)\/([^/]+)\/?$/);
+  if (m && m[2] !== "u") return `/p/${m[1]}/u/${m[2]}`;
+
+  return null;
+}
+
 /**
  * Merged WhatsApp-card site:
- *   / and /share              → client property cards
- *   /share/clients/:id        → property cards for a client
- *   /share/packs/:id          → multi-listing WhatsApp pack
- *   /p/packs/:id              → broker multi-listing pack (propnetra host)
- *   /share/listings/:id       → single listing card
- *   /clients/:id, /listings/:id, /packs/:id (short links) rewrite to /share/...
+ *   Short: /l /c /k  (+ legacy /share/... and /listings /clients /packs)
  * Anything else (marketing, /agent) is 404.
  */
 function handleShareHost(request: NextRequest) {
@@ -55,6 +82,9 @@ function handleShareHost(request: NextRequest) {
     headers.set("x-propnetra-site", "share");
     return NextResponse.rewrite(url, { request: { headers } });
   }
+
+  const short = rewriteShortSharePath(pathname);
+  if (short) return rewriteToShare(request, short);
 
   if (
     pathname.startsWith("/share") ||
@@ -94,8 +124,7 @@ function handleShareHost(request: NextRequest) {
 
 /**
  * propnetra.devsol.in  → marketing site
- *   /p/:listingId      → broker WhatsApp listing card (same UI as sslip /share/listings)
- *   /api/og-image      → OG image proxy for that card
+ *   /p/:id  /p/:id/:sharer  /k/:id  → broker WhatsApp cards
  * 168-144-88-78.sslip.io → client WhatsApp share pages only
  */
 export function proxy(request: NextRequest) {
@@ -114,6 +143,9 @@ export function proxy(request: NextRequest) {
 
   if (isPropnetraHost(host)) {
     const { pathname } = request.nextUrl;
+    const short = rewriteShortBrokerPath(pathname);
+    if (short) return rewriteToShare(request, short);
+
     if (
       isBrokerListingPath(pathname) ||
       pathname.startsWith("/api/og-image") ||

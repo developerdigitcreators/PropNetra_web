@@ -23,7 +23,7 @@ export async function generateMetadata({
     const data = await fetchSharedListing(clientId, listingId, showPrice);
     return listingShareMetadata(
       data.item,
-      withPriceQuery(`/share/clients/${clientId}/${listingId}`, showPrice),
+      withPriceQuery(`/c/${clientId}/${listingId}`, showPrice),
       data.og,
       await resolveSiteUrl(),
     );
@@ -37,7 +37,7 @@ export default async function SharedListingPage({ params, searchParams }: PagePr
   const showPrice = parseShowPrice((await searchParams).price);
   const origin = await resolveSiteUrl();
   const data = await fetchSharedListing(clientId, listingId, showPrice);
-  const path = withPriceQuery(`/share/clients/${clientId}/${listingId}`, showPrice);
+  const path = withPriceQuery(`/c/${clientId}/${listingId}`, showPrice);
 
   return (
     <div className="min-h-dvh bg-[#f4f4f4]">
@@ -45,7 +45,7 @@ export default async function SharedListingPage({ params, searchParams }: PagePr
       <div className="relative mx-auto min-h-dvh w-full max-w-[430px] bg-white">
         <PropertyDetail
           item={data.item}
-          backHref={withPriceQuery(`/share/clients/${clientId}`, showPrice)}
+          backHref={withPriceQuery(`/c/${clientId}`, showPrice)}
         />
       </div>
     </div>

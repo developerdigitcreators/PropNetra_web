@@ -21,7 +21,7 @@ export function PropertyCard({
     item.postedByBadge,
     item.buildingType,
   ].filter((value): value is string => !!value);
-  const resolvedSharePath = sharePath || href || `/share/listings/${item.id}`;
+  const resolvedSharePath = sharePath || href || `/l/${item.shareCode || item.id}`;
   const bodyClass = "block px-4 pt-4";
   const body = (
     <>

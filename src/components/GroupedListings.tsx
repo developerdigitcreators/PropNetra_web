@@ -70,7 +70,7 @@ export function GroupedListings({
                 hrefForItem
                   ? hrefForItem(item)
                   : withPriceQuery(
-                      `/share/clients/${clientId}/${item.id}`,
+                      `/c/${clientId}/${item.shareCode || item.id}`,
                       showPrice,
                     )
               }

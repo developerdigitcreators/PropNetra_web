@@ -18,7 +18,7 @@ export async function generateMetadata({
   return listingCardMetadata(
     listingId,
     showPrice,
-    `/p/${listingId}/u/${sharerCode}`,
+    `/p/${listingId}/${sharerCode}`,
     sharerCode,
   );
 }
@@ -34,7 +34,7 @@ export default async function BrokerListingBySharerPage({
     <ListingCardScreen
       listingId={listingId}
       showPrice={showPrice}
-      path={`/p/${listingId}/u/${sharerCode}`}
+      path={`/p/${listingId}/${sharerCode}`}
       sharerCode={sharerCode}
     />
   );

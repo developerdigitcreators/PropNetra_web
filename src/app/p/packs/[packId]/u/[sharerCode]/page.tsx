@@ -16,7 +16,7 @@ export async function generateMetadata({
   const { packId, sharerCode } = await params;
   return sharePackMetadata(
     packId,
-    `/p/packs/${packId}/u/${encodeURIComponent(sharerCode)}`,
+    `/k/${packId}/${encodeURIComponent(sharerCode)}`,
   );
 }
 
@@ -26,9 +26,9 @@ export default async function BrokerPackBySharerPage({ params }: PageProps) {
   return (
     <PackListScreen
       packId={packId}
-      path={`/p/packs/${packId}/u/${encodeURIComponent(sharerCode)}`}
+      path={`/k/${packId}/${encodeURIComponent(sharerCode)}`}
       listingPath={(item) =>
-        `/p/${encodeURIComponent(item.shareCode || item.id)}/u/${encodeURIComponent(sharerCode)}`
+        `/p/${encodeURIComponent(item.shareCode || item.id)}/${encodeURIComponent(sharerCode)}`
       }
       title="Shared Properties"
     />
