@@ -37,8 +37,10 @@ function rewriteToShare(request: NextRequest, pathname = "/share") {
  * Merged WhatsApp-card site:
  *   / and /share              → client property cards
  *   /share/clients/:id        → property cards for a client
+ *   /share/packs/:id          → multi-listing WhatsApp pack
+ *   /p/packs/:id              → broker multi-listing pack (propnetra host)
  *   /share/listings/:id       → single listing card
- *   /clients/:id, /listings/:id (short links) rewrite to /share/...
+ *   /clients/:id, /listings/:id, /packs/:id (short links) rewrite to /share/...
  * Anything else (marketing, /agent) is 404.
  */
 function handleShareHost(request: NextRequest) {
@@ -79,8 +81,10 @@ function handleShareHost(request: NextRequest) {
   if (
     pathname.startsWith("/clients/") ||
     pathname.startsWith("/listings/") ||
+    pathname.startsWith("/packs/") ||
     pathname === "/clients" ||
-    pathname === "/listings"
+    pathname === "/listings" ||
+    pathname === "/packs"
   ) {
     return rewriteToShare(request, `/share${pathname}`);
   }

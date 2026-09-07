@@ -3,6 +3,7 @@ import type {
   ApiEnvelope,
   SharedDetailResponse,
   SharedListResponse,
+  SharedPackResponse,
   SharedSingleListingResponse,
 } from "./types";
 
@@ -70,4 +71,12 @@ export function fetchPublicListing(
     ? `/share/listings/${listingId}/u/${encodeURIComponent(by)}`
     : `/share/listings/${listingId}`;
   return getJson<SharedSingleListingResponse>(path);
+}
+
+/** Multi-select own-listings share pack (client + broker WhatsApp preview). */
+export function fetchSharePack(packId: string, limit = 100) {
+  const safeLimit = Math.min(100, Math.max(1, Number(limit) || 100));
+  return getJson<SharedPackResponse>(
+    `/share/packs/${encodeURIComponent(packId)}?limit=${safeLimit}`,
+  );
 }

@@ -9,10 +9,12 @@ export function GroupedListings({
   clientId,
   groups,
   showPrice = false,
+  hrefForItem,
 }: {
   clientId: string;
   groups: ListingGroup[];
   showPrice?: boolean;
+  hrefForItem?: (item: ListingGroup["items"][number]) => string;
 }) {
   const visible = useMemo(
     () => groups.filter((group) => group.count > 0),
@@ -64,7 +66,14 @@ export function GroupedListings({
             <PropertyCard
               key={item.id}
               item={item}
-              href={withPriceQuery(`/share/clients/${clientId}/${item.id}`, showPrice)}
+              href={
+                hrefForItem
+                  ? hrefForItem(item)
+                  : withPriceQuery(
+                      `/share/clients/${clientId}/${item.id}`,
+                      showPrice,
+                    )
+              }
             />
           ))}
         </div>

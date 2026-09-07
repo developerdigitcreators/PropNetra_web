@@ -121,6 +121,8 @@ export function isShareAppPath(pathname: string) {
     pathname.startsWith("/clients/") ||
     pathname === "/listings" ||
     pathname.startsWith("/listings/") ||
+    pathname === "/packs" ||
+    pathname.startsWith("/packs/") ||
     pathname.startsWith("/api/og-image") ||
     pathname.startsWith("/api/og-avatar")
   );

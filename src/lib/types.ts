@@ -1,5 +1,6 @@
 export type SharedPropertyCard = {
   id: string;
+  shareCode?: string | null;
   displayTitle: string;
   showForSaleInLocation?: boolean;
   statusLabel: string;
@@ -63,6 +64,25 @@ export type SharedListResponse = {
   items: SharedPropertyCard[];
   groups: ListingGroup[];
   og?: ShareOg;
+};
+
+export type SharedPackResponse = {
+  packId: string;
+  shareCode?: string | null;
+  showPrice?: boolean;
+  updatedAt: string;
+  total: number;
+  page: number;
+  limit: number;
+  items: SharedPropertyCard[];
+  groups: ListingGroup[];
+  og?: ShareOg;
+  agent?: {
+    name?: string | null;
+    companyName?: string | null;
+    city?: string | null;
+    bio?: string | null;
+  } | null;
 };
 
 export type SharedDetailResponse = {
