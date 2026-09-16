@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
     headers: {
       Accept: "image/jpeg,image/jpg,image/png,image/webp,image/*;q=0.8,*/*;q=0.1",
       "User-Agent":
-        "Mozilla/5.0 (compatible; PropNetraOgBot/1.0; +https://propnetra.devsol.in)",
+        "Mozilla/5.0 (compatible; PropNetraOgBot/1.0; +https://propnetra.com)",
     },
     cache: "no-store",
   });

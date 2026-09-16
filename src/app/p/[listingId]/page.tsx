@@ -18,7 +18,7 @@ export async function generateMetadata({
   return listingCardMetadata(listingId, showPrice, `/p/${listingId}`);
 }
 
-/** Broker share of an agent's own listing on propnetra.devsol.in. Same card as /share/listings. */
+/** Broker share of an agent's own listing on propnetra.com. Same card as /share/listings. */
 export default async function BrokerListingPage({ params, searchParams }: PageProps) {
   const { listingId } = await params;
   const showPrice = parseShowPrice((await searchParams).price);

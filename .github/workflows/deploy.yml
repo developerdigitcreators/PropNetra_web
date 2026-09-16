@@ -25,7 +25,8 @@ jobs:
           cat > .env.production <<EOF
           API_BASE_URL=${API_BASE_URL}
           NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
-          NEXT_PUBLIC_SITE_HOST=propnetra.devsol.in
+          NEXT_PUBLIC_SITE_HOST=propnetra.com
+          NEXT_PUBLIC_SITE_HOSTS=propnetra.devsol.in
           NEXT_PUBLIC_SHARE_DOMAIN=168-144-88-78.sslip.io
           NEXT_PUBLIC_SHARE_SITE_URL=https://168-144-88-78.sslip.io
           EOF
@@ -43,7 +44,8 @@ jobs:
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-          NEXT_PUBLIC_SITE_HOST: propnetra.devsol.in
+          NEXT_PUBLIC_SITE_HOST: propnetra.com
+          NEXT_PUBLIC_SITE_HOSTS: propnetra.devsol.in
           NEXT_PUBLIC_SHARE_DOMAIN: 168-144-88-78.sslip.io
           NEXT_PUBLIC_SHARE_SITE_URL: https://168-144-88-78.sslip.io
         run: npm run build

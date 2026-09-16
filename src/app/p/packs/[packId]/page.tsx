@@ -17,7 +17,7 @@ export async function generateMetadata({
   return sharePackMetadata(packId, `/k/${packId}`);
 }
 
-/** Broker multi-listing WhatsApp pack on propnetra.devsol.in. */
+/** Broker multi-listing WhatsApp pack on propnetra.com. */
 export default async function BrokerPackPage({ params }: PageProps) {
   const { packId } = await params;
   return (

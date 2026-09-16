@@ -1,5 +1,7 @@
 export const DEFAULT_SHARE_DOMAIN = "share.propnetra.com";
-export const DEFAULT_PROPNETRA_DOMAIN = "propnetra.devsol.in";
+export const DEFAULT_PROPNETRA_DOMAIN = "propnetra.com";
+/** Old marketing host — 301 to propnetra.com until DNS/Apache alias is removed. */
+export const LEGACY_PROPNETRA_DOMAIN = "propnetra.devsol.in";
 export const DEFAULT_MERGED_DOMAIN = "168-144-88-78.sslip.io";
 /** WhatsApp client list shown on the merged/sslip domain. */
 export const DEFAULT_SHARE_CLIENT_ID =
@@ -63,7 +65,9 @@ export function propnetraHosts() {
   return new Set(
     [
       DEFAULT_PROPNETRA_DOMAIN,
+      LEGACY_PROPNETRA_DOMAIN,
       normalizeHost(process.env.NEXT_PUBLIC_SITE_HOST),
+      ...splitHosts(process.env.NEXT_PUBLIC_SITE_HOSTS),
     ].filter(Boolean)
   );
 }
@@ -74,7 +78,6 @@ export function mergedHosts() {
       DEFAULT_MERGED_DOMAIN,
       "merged.localhost",
       normalizeHost(process.env.STAGING_HOST),
-      ...splitHosts(process.env.NEXT_PUBLIC_SITE_HOSTS),
     ].filter(Boolean)
   );
 }

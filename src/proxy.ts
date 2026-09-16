@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
+  DEFAULT_PROPNETRA_DOMAIN,
   DEFAULT_SHARE_CLIENT_ID,
+  LEGACY_PROPNETRA_DOMAIN,
   isAgentPath,
   isAllowedSiteHost,
   isBrokerListingPath,
@@ -9,6 +11,7 @@ import {
   isPropnetraHost,
   isShareAppPath,
   isShareHost,
+  normalizeHost,
 } from "@/lib/domains";
 
 function hostname(request: NextRequest) {
@@ -123,8 +126,9 @@ function handleShareHost(request: NextRequest) {
 }
 
 /**
- * propnetra.devsol.in  → marketing site
+ * propnetra.com (and www) → marketing site
  *   /p/:id  /p/:id/:sharer  /k/:id  → broker WhatsApp cards
+ * propnetra.devsol.in → 301 to propnetra.com
  * 168-144-88-78.sslip.io → client WhatsApp share pages only
  */
 export function proxy(request: NextRequest) {
@@ -137,8 +141,12 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (isShareHost(host)) {
-    return handleShareHost(request);
+  if (normalizeHost(host) === LEGACY_PROPNETRA_DOMAIN) {
+    const dest = new URL(request.url);
+    dest.hostname = DEFAULT_PROPNETRA_DOMAIN;
+    dest.protocol = "https:";
+    dest.port = "";
+    return NextResponse.redirect(dest, 301);
   }
 
   if (isPropnetraHost(host)) {
@@ -157,6 +165,10 @@ export function proxy(request: NextRequest) {
       return notFound();
     }
     return NextResponse.next();
+  }
+
+  if (isShareHost(host)) {
+    return handleShareHost(request);
   }
 
   return NextResponse.next();
