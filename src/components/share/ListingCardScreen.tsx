@@ -12,16 +12,41 @@ export async function listingCardMetadata(
   path: string,
   sharerCode?: string | null,
 ) {
+  const origin = await resolveSiteUrl();
   try {
     const data = await fetchPublicListing(listingId, showPrice, sharerCode);
     return listingShareMetadata(
       data.item,
       withPriceQuery(path, showPrice),
       data.og,
-      await resolveSiteUrl(),
+      origin,
     );
   } catch {
-    return { title: "Property" };
+    // Still emit og:image (logo) so WhatsApp does not drop the card entirely
+    // when the API is briefly unavailable during scrape.
+    return listingShareMetadata(
+      {
+        id: listingId,
+        displayTitle: "Property",
+        statusLabel: "",
+        category: null,
+        buildingType: null,
+        propertyType: null,
+        location: null,
+        micromarket: null,
+        city: null,
+        locationLine: "",
+        bhk: null,
+        bhkLabel: null,
+        area: { size: null, unit: null },
+        imageUrl: null,
+        savedAt: "",
+        showContact: false,
+      },
+      withPriceQuery(path, showPrice),
+      null,
+      origin,
+    );
   }
 }
 

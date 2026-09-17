@@ -91,8 +91,16 @@ export function listingShareMetadata(
       .join(" | ") ||
     SITE_TAGLINE;
   const url = siteUrl(path, origin);
-  const image = proxiedOgImageUrl(og?.imageUrl, origin);
-  const hasImage = !!image;
+  // Prefer API OG image, then listing photo, then site logo — WhatsApp skips
+  // rich previews when og:image is missing.
+  const rawImage =
+    og?.imageUrl ||
+    item.imageUrl ||
+    (Array.isArray(item.imageUrls) ? item.imageUrls[0] : null) ||
+    null;
+  const proxied = proxiedOgImageUrl(rawImage, origin);
+  const image = proxied || siteLogoUrl(origin);
+  const usingLogo = !proxied;
 
   return {
     title,
@@ -107,24 +115,22 @@ export function listingShareMetadata(
       description,
       url,
       locale: "en_IN",
-      images: hasImage
-        ? [
-            {
-              url: image as string,
-              secureUrl: image as string,
-              width: 1200,
-              height: 630,
-              alt: title,
-              type: "image/jpeg",
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: image,
+          secureUrl: image,
+          width: usingLogo ? 512 : 1200,
+          height: usingLogo ? 512 : 630,
+          alt: title,
+          type: usingLogo ? "image/png" : "image/jpeg",
+        },
+      ],
     },
     twitter: {
-      card: hasImage ? "summary_large_image" : "summary",
+      card: usingLogo ? "summary" : "summary_large_image",
       title,
       description,
-      images: hasImage && image ? [image] : undefined,
+      images: [image],
     },
   };
 }
@@ -152,10 +158,11 @@ export function clientListMetadata(args: {
   const isOgAvatar =
     /^https?:\/\//i.test(rawImage) &&
     /\/api\/og-avatar(?:\?|$)/i.test(rawImage);
-  const image = isOgAvatar
+  const proxied = isOgAvatar
     ? rawImage
     : proxiedOgImageUrl(rawImage, origin, { layout: "thumb" });
-  const hasImage = !!image;
+  const image = proxied || siteLogoUrl(origin);
+  const usingLogo = !proxied;
 
   return {
     title,
@@ -170,24 +177,22 @@ export function clientListMetadata(args: {
       description,
       url,
       locale: "en_IN",
-      images: hasImage
-        ? [
-            {
-              url: image as string,
-              secureUrl: image as string,
-              width: 200,
-              height: 200,
-              alt: title,
-              type: "image/jpeg",
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: image,
+          secureUrl: image,
+          width: usingLogo ? 512 : 200,
+          height: usingLogo ? 512 : 200,
+          alt: title,
+          type: usingLogo ? "image/png" : "image/jpeg",
+        },
+      ],
     },
     twitter: {
-      card: hasImage ? "summary" : "summary",
+      card: "summary",
       title,
       description,
-      images: hasImage && image ? [image] : undefined,
+      images: [image],
     },
   };
 }

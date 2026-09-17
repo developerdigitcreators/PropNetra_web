@@ -28,7 +28,7 @@ export default async function ShareLayout({
   return (
     <div className={`${sans.variable} ${sans.className} share-root antialiased`}>
       <meta property="og:logo" content={siteIconUrl(origin)} />
-      <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={organizationJsonLd(origin)} />
       {children}
     </div>
   );

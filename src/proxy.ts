@@ -43,6 +43,15 @@ function rewriteShortSharePath(pathname: string): string | null {
   m = pathname.match(/^\/l\/([^/]+)\/?$/);
   if (m) return `/share/listings/${m[1]}`;
 
+  // Broker /p links sometimes land on the client share host (app rewrite /
+  // copy-paste). Serve the same listing OG page so WhatsApp still gets a card.
+  m = pathname.match(/^\/p\/(?!packs(?:\/|$))([^/]+)\/u\/([^/]+)\/?$/);
+  if (m) return `/share/listings/${m[1]}/u/${m[2]}`;
+  m = pathname.match(/^\/p\/(?!packs(?:\/|$))([^/]+)\/([^/]+)\/?$/);
+  if (m && m[2] !== "u") return `/share/listings/${m[1]}/u/${m[2]}`;
+  m = pathname.match(/^\/p\/(?!packs(?:\/|$))([^/]+)\/?$/);
+  if (m) return `/share/listings/${m[1]}`;
+
   m = pathname.match(/^\/c\/([^/]+)\/([^/]+)\/?$/);
   if (m) return `/share/clients/${m[1]}/${m[2]}`;
   m = pathname.match(/^\/c\/([^/]+)\/?$/);

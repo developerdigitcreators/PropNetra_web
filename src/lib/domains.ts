@@ -127,6 +127,8 @@ export function isShareAppPath(pathname: string) {
     pathname.startsWith("/share/") ||
     pathname === "/l" ||
     pathname.startsWith("/l/") ||
+    pathname === "/p" ||
+    pathname.startsWith("/p/") ||
     pathname === "/c" ||
     pathname.startsWith("/c/") ||
     pathname === "/k" ||
