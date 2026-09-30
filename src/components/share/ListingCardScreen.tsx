@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
+import { FloorListingCard } from "@/components/FloorListingCard";
 import { PropertyCard } from "@/components/PropertyCard";
 import { fetchPublicListing } from "@/lib/api";
 import { withPriceQuery } from "@/lib/price";
@@ -68,7 +69,11 @@ export async function ListingCardScreen({
   return (
     <AppShell title="Property" beige>
       <JsonLd data={[organizationJsonLd(origin), listingJsonLd(data.item, sharePath, origin)]} />
-      <PropertyCard item={data.item} sharePath={sharePath} />
+      {data.item.cardStyle === "image_top" ? (
+        <FloorListingCard item={data.item} sharePath={sharePath} />
+      ) : (
+        <PropertyCard item={data.item} sharePath={sharePath} />
+      )}
     </AppShell>
   );
 }

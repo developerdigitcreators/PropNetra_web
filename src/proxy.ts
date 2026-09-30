@@ -63,6 +63,9 @@ function rewriteShortSharePath(pathname: string): string | null {
   m = pathname.match(/^\/v\/([^/]+)\/?$/);
   if (m) return `/share/compare/${m[1]}`;
 
+  m = pathname.match(/^\/d\/([^/]+)\/?$/);
+  if (m) return `/share/developer/${m[1]}`;
+
   return null;
 }
 

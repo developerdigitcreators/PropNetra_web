@@ -29,6 +29,17 @@ export type SharedPropertyCard = {
   updatedAt?: string;
   savedAt: string;
   showContact: boolean;
+  /** `image_top` = Direct Builder Floor card (image strip + floor prices). */
+  cardStyle?: "image_top" | "default" | null;
+  floorPricing?: SharedFloorPrice[];
+  images?: string[];
+};
+
+export type SharedFloorPrice = {
+  floorNumber?: number | null;
+  price?: number | null;
+  isSold?: boolean;
+  status?: string | null;
 };
 
 export type ShareOg = {

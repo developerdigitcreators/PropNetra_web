@@ -106,6 +106,85 @@ export function fetchSharedCompare(code: string) {
   );
 }
 
+export type SharedDeveloperProjectCard = {
+  id: string;
+  shareCode: string | null;
+  title: string;
+  imageUrl: string | null;
+  location: string | null;
+  priceLabel: string | null;
+  status: string | null;
+  developerName: string | null;
+};
+
+export type SharedDeveloperProject = {
+  id: string;
+  shareCode: string | null;
+  title: string;
+  buildingType: string | null;
+  propertyType: string | null;
+  location: {
+    name: string | null;
+    micromarket: string | null;
+    city: string | null;
+    label: string;
+  };
+  geo: { lat: number; lng: number } | null;
+  header: { images: string[]; videos: string[]; youtube: string[] };
+  priceRange: {
+    min: number | null;
+    max: number | null;
+    minLabel: string | null;
+    maxLabel: string | null;
+  };
+  projectStatus: string | null;
+  possession: string | null;
+  about: string | null;
+  stats: {
+    units: number | null;
+    towers: number | null;
+    openSpace: string | number | null;
+    bhkTypes: string[];
+    area: string | number | null;
+  };
+  reraNumber: string | null;
+  floorPlans: {
+    name: string;
+    imageUrl: string | null;
+    bedrooms: number | null;
+    price: number | null;
+    priceLabel: string | null;
+    area: string | number | null;
+  }[];
+  gallery: { images: string[]; videos: string[]; youtube: string[] };
+  amenities: { value: string; label: string; iconUrl: string | null }[];
+  locationAdvantage: { tab: string; places: unknown[] }[];
+  developer: {
+    id: string;
+    name: string | null;
+    companyName: string | null;
+    companyLogoUrl: string | null;
+    profilePhotoUrl: string | null;
+    badge: string | null;
+  } | null;
+  otherProjects: SharedDeveloperProjectCard[];
+  similarProjects: { autoslideMs: number; items: SharedDeveloperProjectCard[] };
+};
+
+export type SharedDeveloperProjectResponse = {
+  expired: boolean;
+  message?: string;
+  item?: SharedDeveloperProject;
+  og?: { title: string; description: string; imageUrl: string | null };
+};
+
+/** Shared developer project page (`/d/{code}`). */
+export function fetchSharedDeveloperProject(code: string) {
+  return getJson<SharedDeveloperProjectResponse>(
+    `/share/developer/${encodeURIComponent(code)}`,
+  );
+}
+
 /** Multi-select own-listings share pack (client + broker WhatsApp preview). */
 export function fetchSharePack(packId: string, limit = 100) {
   const safeLimit = Math.min(100, Math.max(1, Number(limit) || 100));
