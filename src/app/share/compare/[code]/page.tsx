@@ -11,7 +11,24 @@ type PageProps = {
 };
 
 const UPPERCASE_WORDS = new Set([
-  "bhk", "rk", "rera", "cctv", "ev", "lpg", "nri", "dg", "ups", "emi", "ac", "stp", "wtp", "bbq", "id", "oc", "cc", "noc",
+  "bhk",
+  "rk",
+  "rera",
+  "cctv",
+  "ev",
+  "lpg",
+  "nri",
+  "dg",
+  "ups",
+  "emi",
+  "ac",
+  "stp",
+  "wtp",
+  "bbq",
+  "id",
+  "oc",
+  "cc",
+  "noc",
 ]);
 const WORD_OVERRIDES: Record<string, string> = {
   sqft: "Sq.ft",
@@ -37,7 +54,8 @@ function humanize(raw: unknown): string {
       if (unit) return `${unit[1]} ${unit[2].toUpperCase()}`;
       if (WORD_OVERRIDES[lower]) return WORD_OVERRIDES[lower];
       if (UPPERCASE_WORDS.has(lower)) return lower.toUpperCase();
-      if (word.length > 1 && word === word.toUpperCase() && /[A-Z]/.test(word)) return word;
+      if (word.length > 1 && word === word.toUpperCase() && /[A-Z]/.test(word))
+        return word;
       return lower.charAt(0).toUpperCase() + lower.slice(1);
     })
     .join(" ");
@@ -53,19 +71,47 @@ type Row = {
 };
 
 const ROWS: Row[] = [
-  { id: "location", label: "LOCATION", value: (p) => dash(humanize(p.location)) },
+  {
+    id: "location",
+    label: "LOCATION",
+    value: (p) => dash(humanize(p.location)),
+  },
   { id: "price", label: "PRICE", value: (p) => p.price || "Price On Request" },
-  { id: "status", label: "STATUS", value: (p) => dash(humanize(p.projectStatus)) },
-  { id: "possession", label: "POSSESSION", value: (p) => dash(humanize(p.possession)) },
-  { id: "bhk", label: "BHK TYPES", value: (p) => (p.bhkTypes.length ? p.bhkTypes.map(humanize).join(", ") : "—") },
+  {
+    id: "status",
+    label: "STATUS",
+    value: (p) => dash(humanize(p.projectStatus)),
+  },
+  {
+    id: "possession",
+    label: "POSSESSION",
+    value: (p) => dash(humanize(p.possession)),
+  },
+  {
+    id: "bhk",
+    label: "BHK TYPES",
+    value: (p) =>
+      p.bhkTypes.length ? p.bhkTypes.map(humanize).join(", ") : "—",
+  },
   { id: "area", label: "AREA", value: (p) => dash(humanize(p.area)) },
   { id: "units", label: "UNITS", value: (p) => dash(p.units) },
   { id: "towers", label: "TOWERS", value: (p) => dash(p.towers) },
-  { id: "rera", label: "RERA", value: (p) => dash(p.reraNumber?.toUpperCase()) },
-  { id: "amenities", label: "AMENITIES", isAmenities: true, value: (p) => p.amenities.slice(0, 6).map(humanize) },
+  {
+    id: "rera",
+    label: "RERA",
+    value: (p) => dash(p.reraNumber?.toUpperCase()),
+  },
+  {
+    id: "amenities",
+    label: "AMENITIES",
+    isAmenities: true,
+    value: (p) => p.amenities.slice(0, 6).map(humanize),
+  },
 ];
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { code } = await params;
   const origin = await resolveSiteUrl();
   const path = `/v/${code}`;
@@ -79,7 +125,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   } catch {
     /* fall back to a generic card */
   }
-  const title = titles.length ? `Compare: ${titles.join(" vs ")}` : "Compare Projects";
+  const title = titles.length
+    ? `Compare: ${titles.join(" vs ")}`
+    : "Compare Projects";
   return listingShareMetadata(
     {
       id: code,
@@ -100,7 +148,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       showContact: false,
     },
     path,
-    { title, description: "Side-by-side developer project comparison | Click more", imageUrl: image },
+    {
+      title,
+      description: "Side-by-side developer project comparison | Click more",
+      imageUrl: image,
+    },
     origin,
   );
 }
@@ -121,16 +173,21 @@ export default async function ShareComparePage({ params }: PageProps) {
     return (
       <AppShell title={title}>
         <div className="mt-10 rounded-2xl bg-white p-6 text-center shadow-sm">
-          <p className="text-[16px] font-bold text-[#0F172A]">Comparison unavailable</p>
+          <p className="text-[16px] font-bold text-[#0F172A]">
+            Comparison unavailable
+          </p>
           <p className="mt-2 text-[13px] leading-5 text-[#64748B]">
-            {data.message || "This comparison is no longer available. Ask the sender to share it again."}
+            {data.message ||
+              "This comparison is no longer available. Ask the sender to share it again."}
           </p>
         </div>
       </AppShell>
     );
   }
 
-  const gridCols = { gridTemplateColumns: `repeat(${projects.length}, minmax(130px, 1fr))` };
+  const gridCols = {
+    gridTemplateColumns: `repeat(${projects.length}, minmax(130px, 1fr))`,
+  };
 
   return (
     <AppShell title={title}>
@@ -144,7 +201,7 @@ export default async function ShareComparePage({ params }: PageProps) {
       </div>
 
       <div className="-mx-1 overflow-x-auto pb-6">
-        <div className="min-w-full overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-sm">
+        <div className="min-w-full overflow-scroll rounded-2xl border border-[#E5E7EB] bg-white shadow-sm">
           <div className="grid" style={gridCols}>
             {projects.map((p, i) => (
               <div
@@ -153,14 +210,22 @@ export default async function ShareComparePage({ params }: PageProps) {
               >
                 {p.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.image} alt={p.title} className="mb-2.5 aspect-square w-full rounded-lg bg-[#f0f0f0] object-cover" />
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    className="mb-2.5 aspect-square w-full rounded-lg bg-[#f0f0f0] object-cover"
+                  />
                 ) : (
                   <div className="mb-2.5 aspect-square w-full rounded-lg bg-[#f0f0f0]" />
                 )}
                 {p.developer?.name ? (
-                  <p className="line-clamp-1 text-center text-[12px] font-bold uppercase text-[#C8102E]">{p.developer.name}</p>
+                  <p className="line-clamp-1 text-center text-[12px] font-bold uppercase text-[#C8102E]">
+                    {p.developer.name}
+                  </p>
                 ) : null}
-                <p className="line-clamp-2 text-center text-[12px] font-bold leading-[18px] text-[#1A1A1A]">{p.title}</p>
+                <p className="line-clamp-2 text-center text-[12px] font-bold leading-[18px] text-[#1A1A1A]">
+                  {p.title}
+                </p>
               </div>
             ))}
           </div>
@@ -170,7 +235,9 @@ export default async function ShareComparePage({ params }: PageProps) {
               <div className="my-4 flex items-center px-4">
                 <div className="h-px flex-1 bg-[#E5E7EB]" />
                 <div className="flex w-[140px] items-center justify-center px-3">
-                  <span className="text-[12px] font-bold tracking-wider text-[#0F172A]">{row.label}</span>
+                  <span className="text-[12px] font-bold tracking-wider text-[#0F172A]">
+                    {row.label}
+                  </span>
                 </div>
                 <div className="h-px flex-1 bg-[#E5E7EB]" />
               </div>
