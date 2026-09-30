@@ -60,6 +60,9 @@ function rewriteShortSharePath(pathname: string): string | null {
   m = pathname.match(/^\/k\/([^/]+)\/?$/);
   if (m) return `/share/packs/${m[1]}`;
 
+  m = pathname.match(/^\/v\/([^/]+)\/?$/);
+  if (m) return `/share/compare/${m[1]}`;
+
   return null;
 }
 
@@ -79,7 +82,7 @@ function rewriteShortBrokerPath(pathname: string): string | null {
 
 /**
  * Merged WhatsApp-card site:
- *   Short: /l /c /k  (+ legacy /share/... and /listings /clients /packs)
+ *   Short: /l /c /k /v  (+ legacy /share/... and /listings /clients /packs)
  * Anything else (marketing, /agent) is 404.
  */
 function handleShareHost(request: NextRequest) {

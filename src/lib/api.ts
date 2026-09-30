@@ -73,6 +73,39 @@ export function fetchPublicListing(
   return getJson<SharedSingleListingResponse>(path);
 }
 
+export type SharedCompareItem = {
+  id: string;
+  title: string;
+  image: string | null;
+  location: string;
+  buildingType: string | null;
+  propertyType: string | null;
+  price: string | null;
+  projectStatus: string | null;
+  possession: string | null;
+  bhkTypes: string[];
+  area: string | null;
+  units: number | null;
+  towers: number | null;
+  openSpace: string | null;
+  reraNumber: string | null;
+  amenities: string[];
+  developer: { id: string; name: string | null; logoUrl: string | null } | null;
+};
+
+export type SharedCompareResponse = {
+  expired: boolean;
+  items?: SharedCompareItem[];
+  message?: string;
+};
+
+/** Agent-shared developer project comparison (`/v/{code}`). */
+export function fetchSharedCompare(code: string) {
+  return getJson<SharedCompareResponse>(
+    `/share/compare/${encodeURIComponent(code)}`,
+  );
+}
+
 /** Multi-select own-listings share pack (client + broker WhatsApp preview). */
 export function fetchSharePack(packId: string, limit = 100) {
   const safeLimit = Math.min(100, Math.max(1, Number(limit) || 100));
