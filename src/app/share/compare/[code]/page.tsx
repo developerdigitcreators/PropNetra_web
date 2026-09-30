@@ -265,7 +265,7 @@ export default async function ShareComparePage({ params }: PageProps) {
                           <span className="text-[12px] text-[#1A1A1A]">—</span>
                         )
                       ) : (
-                        <span className="line-clamp-2 text-center text-[12px] leading-[18px] text-[#1A1A1A]">
+                        <span className="line-clamp-2 text-center flex-wrap flex-row text-[12px] leading-[18px] text-[#1A1A1A]">
                           {String(value).replace(/\n/g, " ")}
                         </span>
                       )}
