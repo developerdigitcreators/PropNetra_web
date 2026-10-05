@@ -6,10 +6,10 @@ import { persistReferralCode } from '@/lib/referral';
 
 const APP_SCHEME = 'propnetra';
 const ANDROID_PACKAGE =
-  process.env.NEXT_PUBLIC_ANDROID_PACKAGE || 'com.propnetra';
+  process.env.NEXT_PUBLIC_ANDROID_PACKAGE || 'com.propnetra123';
 const PLAY_STORE =
   process.env.NEXT_PUBLIC_PLAY_STORE_URL ||
-  `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
+  'https://play.google.com/store/apps/details?id=com.propnetra';
 const APP_STORE =
   process.env.NEXT_PUBLIC_APP_STORE_URL ||
   'https://apps.apple.com/app/propnetra/id0000000000';
