@@ -17,9 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const profile = await fetchPublicProfile(code);
     return profileMetadata({
       og: profile.og,
-      fallbackDescription:
-        [profile.designation, profile.companyName].filter(Boolean).join(" · ") ||
-        "PropNetra profile",
+      fallbackDescription: profile.designation || "PropNetra profile",
       path: `/u/${code}`,
       origin,
     });
