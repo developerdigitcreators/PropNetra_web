@@ -1,0 +1,318 @@
+/* Mirrors src/features/profile (app) — colours/sizes from src/constants/theme. */
+.page {
+  --primary: #ff8a00;
+  --primary-red: #ff5a00;
+  --primary-light: #fff1e6;
+  --light-grey: #f5f5f5;
+  --grey: #9e9e9e;
+  --ink: #131b2e;
+  --muted: #8e7166;
+  --card-border: #f1f5f9;
+  --linkedin: #0a66c2;
+  --card-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+
+  position: relative;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #faf8ff;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px 4px;
+}
+
+.content {
+  position: relative;
+  padding: 122px 16px 25px;
+}
+
+.heroCard {
+  position: relative;
+  background: #fff;
+  border-radius: 24px;
+  padding: 0 20px 20px;
+  margin-bottom: 16px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.heroGlowClip {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.heroGlow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 144px;
+  height: 144px;
+  border-radius: 72px;
+  background: var(--primary-light);
+  opacity: 0.8;
+}
+
+.avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin-top: -50px;
+  border-radius: 18px;
+  border: 2px solid #fff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--light-grey);
+  box-shadow: 0 4px 10px 4px rgba(0, 0, 0, 0.2);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarInitials {
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--grey);
+}
+
+.heroInfo {
+  position: relative;
+  margin-top: 12px;
+}
+
+.nameRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nameWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.heroName {
+  margin: 0;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.verified {
+  flex-shrink: 0;
+  color: #1d9bf0;
+}
+
+.linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--linkedin);
+  text-decoration: none;
+}
+
+.designation {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.company {
+  margin: 4px 0 0;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 15px 20px;
+  margin-bottom: 16px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.cardTitle {
+  margin: 0 0 12px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+}
+
+.cardTitleAccent {
+  color: var(--primary);
+}
+
+/* Fixed icon + label columns so every value starts at the same x. */
+.contactRow {
+  display: grid;
+  grid-template-columns: 32px 56px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  padding: 10px 0;
+}
+
+.contactRow + .contactRow {
+  border-top: 1px solid var(--card-border);
+}
+
+.contactIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--light-grey);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.contactLabel {
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: #000;
+  opacity: 0.5;
+}
+
+.contactValue {
+  min-width: 0;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+/* Partner badge (app PartnerBadge, compact) */
+.badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1.5px solid;
+  overflow: hidden;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.badge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48%;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+.badge > * {
+  position: relative;
+}
+
+.badgeLogo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.stud {
+  width: 5px;
+  height: 5px;
+  border-radius: 3.5px;
+  border: 1px solid;
+}
+
+.badgePro {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  color: #1e293b;
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.25);
+}
+.badgePro::before {
+  height: 50%;
+  background: rgba(255, 255, 255, 0.75);
+}
+.badgePro .stud {
+  background: rgba(217, 217, 217, 0.66);
+  border-color: #475569;
+}
+
+.badgeNetwork {
+  background: #6a3b18;
+  border-color: #b06d3b;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.35);
+}
+.badgeNetwork::before {
+  background: rgba(255, 255, 255, 0.18);
+}
+.badgeNetwork .stud {
+  background: #d4a373;
+  border-color: #4a250b;
+}
+
+.badgeElite {
+  background: #121214;
+  border-color: #d4af37;
+  color: #facc15;
+  text-shadow: 0 1px 3px rgba(234, 179, 8, 0.4);
+  box-shadow: 0 2px 5px rgba(212, 175, 55, 0.3);
+}
+.badgeElite::before {
+  height: 45%;
+  background: rgba(255, 215, 0, 0.12);
+}
+.badgeElite .stud {
+  background: #eab308;
+  border-color: #854d0e;
+}

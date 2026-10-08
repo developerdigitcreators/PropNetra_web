@@ -185,6 +185,43 @@ export function fetchSharedDeveloperProject(code: string) {
   );
 }
 
+export type PublicProfile = {
+  code: string;
+  name: string;
+  appRole: string;
+  profilePhotoUrl: string | null;
+  coverImageUrl: string | null;
+  designation: string | null;
+  companyName: string | null;
+  companyLogoUrl: string | null;
+  city: string | null;
+  state: string | null;
+  linkedinUrl: string | null;
+  partnerBadge: { tier: "elite" | "pro" | "network"; label: string } | null;
+  verified: boolean;
+  contact: string | null;
+  email: string | null;
+  address: string | null;
+  bio: string | null;
+  profileUrl: string | null;
+  og: {
+    title: string;
+    description: string;
+    imageUrl: string;
+    host: string;
+    messageBody: string;
+    initials: string;
+    siteName: string;
+  };
+};
+
+/** Shared agent profile page (`/u/{code}`). */
+export function fetchPublicProfile(code: string) {
+  return getJson<PublicProfile>(
+    `/public/profiles/${encodeURIComponent(code)}`,
+  );
+}
+
 /** Multi-select own-listings share pack (client + broker WhatsApp preview). */
 export function fetchSharePack(packId: string, limit = 100) {
   const safeLimit = Math.min(100, Math.max(1, Number(limit) || 100));

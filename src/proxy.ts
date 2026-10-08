@@ -66,6 +66,9 @@ function rewriteShortSharePath(pathname: string): string | null {
   m = pathname.match(/^\/d\/([^/]+)\/?$/);
   if (m) return `/share/developer/${m[1]}`;
 
+  m = pathname.match(/^\/u\/([^/]+)\/?$/);
+  if (m) return `/share/profiles/${m[1]}`;
+
   return null;
 }
 
@@ -79,6 +82,9 @@ function rewriteShortBrokerPath(pathname: string): string | null {
   // /p/:code/:sharer (drop legacy /u/) — not /p/packs/...
   m = pathname.match(/^\/p\/(?!packs(?:\/|$))([^/]+)\/([^/]+)\/?$/);
   if (m && m[2] !== "u") return `/p/${m[1]}/u/${m[2]}`;
+
+  m = pathname.match(/^\/u\/([^/]+)\/?$/);
+  if (m) return `/share/profiles/${m[1]}`;
 
   return null;
 }

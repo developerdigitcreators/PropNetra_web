@@ -197,6 +197,28 @@ export function clientListMetadata(args: {
   };
 }
 
+/** Public agent profile (`/u/{code}`): same WhatsApp card as client-list / pack links. */
+export function profileMetadata(args: {
+  og: ShareOg;
+  fallbackDescription: string;
+  path: string;
+  origin?: string;
+}): Metadata {
+  return {
+    ...clientListMetadata({
+      clientName: args.og.title,
+      total: 0,
+      path: args.path,
+      og: {
+        ...args.og,
+        description: args.og.description || args.fallbackDescription,
+      },
+      origin: args.origin,
+    }),
+    robots: { index: false, follow: false },
+  };
+}
+
 export function organizationJsonLd(origin = SITE_URL) {
   return {
     "@context": "https://schema.org",
