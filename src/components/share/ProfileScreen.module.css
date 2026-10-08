@@ -128,11 +128,6 @@
   color: var(--ink);
 }
 
-.verified {
-  flex-shrink: 0;
-  color: #1d9bf0;
-}
-
 .linkedin {
   display: inline-flex;
   align-items: center;

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Inter } from "next/font/google";
-import { BadgeCheck, Home, Mail, MapPin, MessageSquare, Phone } from "lucide-react";
+import { Home, Mail, MapPin, MessageSquare, Phone } from "lucide-react";
 import type { ReactNode } from "react";
 import type { PublicProfile } from "@/lib/api";
 import styles from "./ProfileScreen.module.css";
@@ -115,9 +115,6 @@ export function ProfileScreen({ profile }: { profile: PublicProfile }) {
             <div className={styles.nameRow}>
               <div className={styles.nameWrap}>
                 {name ? <h1 className={styles.heroName}>{name}</h1> : null}
-                {profile.verified ? (
-                  <BadgeCheck size={16} className={styles.verified} aria-label="Verified" />
-                ) : null}
               </div>
               {profile.linkedinUrl ? (
                 <a
