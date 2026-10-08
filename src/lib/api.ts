@@ -203,6 +203,8 @@ export type PublicProfile = {
   email: string | null;
   address: string | null;
   bio: string | null;
+  associatedDevelopers?: { id: string; name: string; logoUrl: string | null }[];
+  experience?: { years: number; months: number } | null;
   profileUrl: string | null;
   og: {
     title: string;

@@ -221,6 +221,110 @@
   text-decoration: none;
 }
 
+/* Associated Developers / Experience cards (same layout as the app profile) */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sectionIcon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.sectionSubtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--grey);
+}
+
+.devGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.devTile {
+  aspect-ratio: 5 / 2;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  overflow: hidden;
+}
+
+.devLogo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.devName {
+  font-weight: 700;
+  font-size: 9px;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.expLabel {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  color: var(--grey);
+}
+
+.expGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.expBox {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.expBoxLabel {
+  font-size: 12px;
+  color: var(--grey);
+}
+
+.expBoxValue {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+}
+
 /* Partner badge (app PartnerBadge, compact) */
 .badge {
   position: relative;

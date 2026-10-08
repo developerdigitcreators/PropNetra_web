@@ -1,6 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { Inter } from "next/font/google";
-import { Home, Mail, MapPin, MessageSquare, Phone } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Building2,
+  Home,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import type { PublicProfile } from "@/lib/api";
 import styles from "./ProfileScreen.module.css";
@@ -70,6 +78,26 @@ function PartnerBadge({ badge }: { badge: NonNullable<PublicProfile["partnerBadg
 
 type ContactRow = { icon: ReactNode; label: string; value: string; href?: string };
 
+function SectionHeader({
+  icon,
+  title,
+  subtitle,
+}: {
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <div className={styles.sectionHeader}>
+      <span className={styles.sectionIcon}>{icon}</span>
+      <div>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+        <p className={styles.sectionSubtitle}>{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
 export function ProfileScreen({ profile }: { profile: PublicProfile }) {
   const name = String(profile.name || "").trim();
   const location = [profile.city, profile.state].filter(Boolean).join(", ");
@@ -88,6 +116,8 @@ export function ProfileScreen({ profile }: { profile: PublicProfile }) {
     office ? { icon: <Home size={15} />, label: "OFFICE:", value: office } : null,
     bio ? { icon: <MessageSquare size={15} />, label: "BIO", value: `"${bio}"` } : null,
   ].filter(Boolean) as ContactRow[];
+  const developers = profile.associatedDevelopers || [];
+  const experience = profile.experience || null;
 
   return (
     <main className={`${inter.className} ${styles.page}`}>
@@ -161,6 +191,48 @@ export function ProfileScreen({ profile }: { profile: PublicProfile }) {
                 )}
               </div>
             ))}
+          </section>
+        ) : null}
+
+        {developers.length ? (
+          <section className={styles.card}>
+            <SectionHeader
+              icon={<Building2 size={20} />}
+              title="Associated Developers"
+              subtitle="Developers"
+            />
+            <div className={styles.devGrid}>
+              {developers.map((dev) => (
+                <div key={dev.id} className={styles.devTile} title={dev.name}>
+                  {dev.logoUrl ? (
+                    <img src={dev.logoUrl} alt={dev.name} className={styles.devLogo} />
+                  ) : (
+                    <span className={styles.devName}>{dev.name}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {experience ? (
+          <section className={styles.card}>
+            <SectionHeader
+              icon={<BriefcaseBusiness size={20} />}
+              title="Experience"
+              subtitle="Career History"
+            />
+            <p className={styles.expLabel}>TOTAL EXPERIENCE</p>
+            <div className={styles.expGrid}>
+              <div className={styles.expBox}>
+                <span className={styles.expBoxLabel}>Years</span>
+                <span className={styles.expBoxValue}>{experience.years}</span>
+              </div>
+              <div className={styles.expBox}>
+                <span className={styles.expBoxLabel}>Months</span>
+                <span className={styles.expBoxValue}>{experience.months}</span>
+              </div>
+            </div>
           </section>
         ) : null}
       </div>
