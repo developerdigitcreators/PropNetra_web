@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Navigation } from "lucide-react";
 
 type Place = {
   name?: string | null;
@@ -49,7 +50,9 @@ export function LocationTabs({
       <div className="flex flex-col gap-1">
         {visible.map((p, i) => (
           <div key={`${p.name}-${i}`} className="flex items-center gap-3 py-2">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center text-[#FF5A00]">➤</span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center text-[#FF5A00]">
+              <Navigation size={14} />
+            </span>
             <p className="min-w-0 flex-1 truncate text-[14px] text-black">{p.name}</p>
             <span className="shrink-0 text-[13px] text-[#64748B]">
               {p.distance ||

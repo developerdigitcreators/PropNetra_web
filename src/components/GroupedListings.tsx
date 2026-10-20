@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { DeveloperProjectCard, isDeveloperListCard } from "@/components/DeveloperProjectCard";
 import { PropertyCard } from "@/components/PropertyCard";
 import { withPriceQuery } from "@/lib/price";
 import type { ListingGroup } from "@/lib/types";
@@ -67,10 +68,16 @@ export function GroupedListings({
           <h2 className="text-[16px] font-extrabold text-[#111]">{selected.label}</h2>
           {selected.items.map((item) => {
             const key = encodeURIComponent(item.shareCode || item.id);
-            const href = hrefPrefix
-              ? `${hrefPrefix}/${key}${hrefSuffix || ""}`
-              : withPriceQuery(`/c/${clientId}/${key}`, showPrice);
-            return <PropertyCard key={item.id} item={item} href={href} />;
+            const href = isDeveloperListCard(item)
+              ? `/d/${key}`
+              : hrefPrefix
+                ? `${hrefPrefix}/${key}${hrefSuffix || ""}`
+                : withPriceQuery(`/c/${clientId}/${key}`, showPrice);
+            return isDeveloperListCard(item) ? (
+              <DeveloperProjectCard key={item.id} item={item} href={href} />
+            ) : (
+              <PropertyCard key={item.id} item={item} href={href} />
+            );
           })}
         </div>
       ) : (

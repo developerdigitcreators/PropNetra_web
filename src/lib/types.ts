@@ -29,8 +29,10 @@ export type SharedPropertyCard = {
   updatedAt?: string;
   savedAt: string;
   showContact: boolean;
-  /** `image_top` = Direct Builder Floor card (image strip + floor prices). */
-  cardStyle?: "image_top" | "default" | null;
+  /** `image_top` = Direct Builder Floor. `developer` = project photo card. */
+  cardStyle?: "image_top" | "developer" | "default" | null;
+  developerProject?: boolean;
+  possession?: string | null;
   floorPricing?: SharedFloorPrice[];
   images?: string[];
 };

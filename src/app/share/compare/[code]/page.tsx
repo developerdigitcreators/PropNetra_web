@@ -262,14 +262,14 @@ export default async function ShareComparePage({ params }: PageProps) {
         </p>
       </div>
 
-      <div className="overflow-x-auto px-3 pb-6">
+      <div className="-mx-2 overflow-x-auto px-1 pb-6">
         <div className="min-w-full overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-sm mb-28">
           {/* Projects Header Row (Images & Titles) */}
           <div className="grid" style={gridCols}>
             {projects.map((p, i) => (
               <div
                 key={p.id}
-                className={`flex flex-col items-center p-2.5 ${
+                className={`flex flex-col items-center p-1.5 ${
                   i !== projects.length - 1 ? "border-r border-[#F3F4F6]" : ""
                 }`}
               >
@@ -305,7 +305,7 @@ export default async function ShareComparePage({ params }: PageProps) {
                   return (
                     <div
                       key={`${p.id}-${row.id}`}
-                      className={`flex flex-col items-center px-2.5 pb-2.5 ${
+                      className={`flex w-full min-w-0 flex-col items-center px-1.5 pb-2 ${
                         i !== projects.length - 1
                           ? "border-r border-[#F3F4F6]"
                           : ""
@@ -331,7 +331,13 @@ export default async function ShareComparePage({ params }: PageProps) {
                           </span>
                         )
                       ) : (
-                        <span className="line-clamp-2 text-center text-[12px] font-regular leading-[18px] text-[#1A1A1A]">
+                        <span
+                          className={`w-full text-center text-[12px] font-regular leading-[18px] text-[#1A1A1A] ${
+                            row.id === "rera"
+                              ? "flex flex-wrap justify-center break-all"
+                              : "line-clamp-2"
+                          }`}
+                        >
                           {String(value).replace(/\n/g, " ")}
                         </span>
                       )}

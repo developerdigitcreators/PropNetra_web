@@ -49,6 +49,33 @@ function youtubeId(url: string): string | null {
   return m ? m[1] : null;
 }
 
+function formatBhkLine(types: string[]): string {
+  const nums: string[] = [];
+  const others: string[] = [];
+  for (const raw of types) {
+    const text = String(raw ?? "").trim();
+    if (!text) continue;
+    const m = text.replace(/_/g, "+").match(/^(\d+(?:\.\d+)?\+?)\s*bhk$/i);
+    if (m) {
+      if (!nums.includes(m[1])) nums.push(m[1]);
+    } else {
+      const h = humanize(text);
+      if (h && !others.includes(h)) others.push(h);
+    }
+  }
+  const order = (s: string) => parseFloat(s) + (s.endsWith("+") ? 0.5 : 0);
+  nums.sort((a, b) => order(a) - order(b));
+  const bhk = nums.length ? `${nums.join("/")} BHK` : "";
+  return [bhk, ...others].filter(Boolean).join(", ");
+}
+
+function minAreaLabel(raw: unknown): string {
+  const s = raw == null ? "" : humanize(raw);
+  const m = s.match(/^([\d.,]+)\s*[-–—]\s*[\d.,]+\s*(.*)$/);
+  if (!m) return s;
+  return m[2] ? `${m[1]} ${m[2]}` : m[1];
+}
+
 function splitTitle(title: string): [string, string] {
   const words = title.trim().split(/\s+/);
   if (words.length < 2) return [title, ""];
@@ -117,15 +144,13 @@ export default async function ShareDeveloperProjectPage({ params }: PageProps) {
 
   const logo = p.developer?.companyLogoUrl || p.developer?.profilePhotoUrl || null;
   const [titleMain, titleAccent] = splitTitle(p.title);
-  const price =
-    p.priceRange.minLabel && p.priceRange.maxLabel && p.priceRange.minLabel !== p.priceRange.maxLabel
-      ? `${p.priceRange.minLabel} - ${p.priceRange.maxLabel}`
-      : p.priceRange.minLabel || p.priceRange.maxLabel || "Price On Request";
-  const mapUrl = p.geo
-    ? `https://www.google.com/maps/search/?api=1&query=${p.geo.lat},${p.geo.lng}`
-    : p.location.label
-      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.location.label)}`
-      : null;
+  const locationLabel = [p.location.name, p.location.city].filter(Boolean).join(", ");
+  const mapQuery = p.geo
+    ? `${p.geo.lat},${p.geo.lng}`
+    : locationLabel;
+  const mapUrl = mapQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+    : null;
   const images = p.header.images.length ? p.header.images : p.gallery.images;
   const youtube = [...p.header.youtube, ...p.gallery.youtube]
     .map(youtubeId)
@@ -144,12 +169,15 @@ export default async function ShareDeveloperProjectPage({ params }: PageProps) {
     })),
   ];
   const specs = [
-    { label: "BHK Types", value: p.stats.bhkTypes.map(humanize).join(", ") },
-    { label: "Area", value: p.stats.area != null ? humanize(p.stats.area) : "" },
+    { label: "Category", value: humanize(p.propertyType || p.buildingType) },
     { label: "Units", value: p.stats.units != null ? String(p.stats.units) : "" },
-    { label: "Towers", value: p.stats.towers != null ? String(p.stats.towers) : "" },
+    {
+      label: "Towers",
+      value: p.stats.towers != null ? String(p.stats.towers).padStart(2, "0") : "",
+    },
     { label: "Open Space", value: p.stats.openSpace != null ? humanize(p.stats.openSpace) : "" },
-    { label: "Property Type", value: humanize(p.propertyType) },
+    { label: "BHK Types", value: formatBhkLine(p.stats.bhkTypes) },
+    { label: "Area", value: minAreaLabel(p.stats.area) },
   ].filter((s) => s.value);
 
   return (
@@ -163,8 +191,7 @@ export default async function ShareDeveloperProjectPage({ params }: PageProps) {
         titleMain={titleMain}
         titleAccent={titleAccent}
         fullTitle={p.title}
-        locationLabel={p.location.label}
-        price={price}
+        locationLabel={locationLabel}
         mapUrl={mapUrl}
         projectStatus={humanize(p.projectStatus)}
         possession={possessionLabel(p.possession)}

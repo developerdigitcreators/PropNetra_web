@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Check, Clock, Home, Image as ImageIcon, Play, Video } from "lucide-react";
 import { LocationTabs } from "./LocationTabs";
 
 const RED = "#FF5A00";
@@ -29,7 +30,6 @@ export function DeveloperDetailView({
   titleAccent,
   fullTitle,
   locationLabel,
-  price,
   mapUrl,
   projectStatus,
   possession,
@@ -52,7 +52,6 @@ export function DeveloperDetailView({
   titleAccent: string;
   fullTitle: string;
   locationLabel: string;
-  price: string;
   mapUrl: string | null;
   projectStatus: string;
   possession: string;
@@ -70,14 +69,26 @@ export function DeveloperDetailView({
   const [slideIndex, setSlideIndex] = useState(0);
   const [planName, setPlanName] = useState(floorPlans[0]?.name || "");
   const plan = floorPlans.find((p) => p.name === planName) || floorPlans[0];
-  const cover = youtubeIds[0]
-    ? `https://img.youtube.com/vi/${youtubeIds[0]}/hqdefault.jpg`
-    : galleryImages[0] || null;
+  const media = useMemo(() => {
+    const items: Array<
+      | { kind: "youtube"; id: string }
+      | { kind: "image"; uri: string }
+      | { kind: "video"; uri: string }
+    > = [
+      ...youtubeIds.map((id) => ({ kind: "youtube" as const, id })),
+      ...galleryImages.map((uri) => ({ kind: "image" as const, uri })),
+    ];
+    return items;
+  }, [youtubeIds, galleryImages]);
+  const [mediaKey, setMediaKey] = useState(media[0] ? mediaKeyOf(media[0]) : "");
+  const activeMedia = media.find((item) => mediaKeyOf(item) === mediaKey) || media[0];
 
   const amenityRows = useMemo(() => {
     if (!amenities.length) return [];
-    const mid = Math.ceil(amenities.length / 2);
-    return [amenities.slice(0, mid), amenities.slice(mid)].filter((row) => row.length);
+    const rowCount = Math.max(1, Math.min(4, Math.ceil(amenities.length / 4)));
+    const rows: DetailAmenity[][] = Array.from({ length: rowCount }, () => []);
+    amenities.forEach((item, index) => rows[index % rowCount].push(item));
+    return rows.filter((row) => row.length);
   }, [amenities]);
 
   return (
@@ -105,7 +116,7 @@ export function DeveloperDetailView({
                   )}
                   <span className="absolute inset-0 flex items-center justify-center">
                     <span className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white bg-[#0F172A]/60 text-white">
-                      ▶
+                      <Play size={26} fill="currentColor" />
                     </span>
                   </span>
                 </>
@@ -140,12 +151,12 @@ export function DeveloperDetailView({
           <span className="flex items-center gap-2.5">
             {videoCount > 0 ? (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-bold text-black">
-                ▶ {videoCount}
+                <Video size={16} /> {videoCount}
               </span>
             ) : null}
             {photoCount > 0 ? (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-bold text-black">
-                ▣ {photoCount}
+                <ImageIcon size={16} /> {photoCount}
               </span>
             ) : null}
           </span>
@@ -166,12 +177,10 @@ export function DeveloperDetailView({
                 {locationLabel}
               </p>
             ) : null}
-            <p className="mt-5 text-[18px] font-bold text-black">{price}</p>
-            <p className="mt-0.5 text-[12px] text-[#94A3B8]">(Add. charges & Taxes Extra)</p>
           </div>
           {mapUrl ? (
             <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="flex shrink-0 items-center gap-1 pt-1 text-[12px] text-black">
-              <span className="text-[18px]">📍</span>
+              <MapsPin />
               View On Map
             </a>
           ) : null}
@@ -179,7 +188,9 @@ export function DeveloperDetailView({
 
         <div className="mt-4 flex items-center justify-around rounded-2xl border border-[#9E9E9E]/40 py-2.5">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#FDF7EE] text-[#B49164]">⌂</span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#FDF7EE] text-[#B49164]">
+              <Home size={20} />
+            </span>
             <div>
               <p className="text-[12px] font-medium text-[#94A3B8]">Status</p>
               <p className="text-[14px] font-bold text-black">{projectStatus || "—"}</p>
@@ -187,7 +198,9 @@ export function DeveloperDetailView({
           </div>
           <span className="h-8 w-px bg-[#9E9E9E]" />
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#FDF7EE] text-[#B49164]">◷</span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#FDF7EE] text-[#B49164]">
+              <Clock size={20} />
+            </span>
             <div>
               <p className="text-[12px] font-medium text-[#94A3B8]">Possession</p>
               <p className="text-[14px] font-bold text-black">{possession || "—"}</p>
@@ -232,9 +245,15 @@ export function DeveloperDetailView({
         ) : null}
 
         {reraNumber ? (
-          <div className="mt-4 overflow-hidden rounded-[10px] border border-[#9E9E9E]/15 p-4">
-            <p className="text-[18px] font-bold text-black">Project Rera Number</p>
-            <p className="mt-1 text-[14px] text-[#9E9E9E]">{reraNumber}</p>
+          <div className="relative mt-4 overflow-hidden rounded-[10px] border border-[#9E9E9E]/15 p-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/rera-background.png"
+              alt=""
+              className="pointer-events-none absolute top-0 left-2.5 h-full w-full object-contain opacity-10"
+            />
+            <p className="relative text-[18px] font-bold text-black">Project Rera Number</p>
+            <p className="relative mt-1 text-[14px] text-[#9E9E9E]">{reraNumber}</p>
           </div>
         ) : null}
 
@@ -274,35 +293,55 @@ export function DeveloperDetailView({
           </section>
         ) : null}
 
-        {cover || galleryImages.length ? (
+        {activeMedia ? (
           <section className="pt-5">
             <SectionHead lead="Videos &" accent="Photos" />
-            {youtubeIds[0] ? (
+            {activeMedia.kind === "youtube" ? (
               <iframe
-                src={`https://www.youtube.com/embed/${youtubeIds[0]}`}
+                key={activeMedia.id}
+                src={`https://www.youtube.com/embed/${activeMedia.id}`}
                 title="Project video"
                 allowFullScreen
                 className="h-[180px] w-full"
               />
-            ) : cover ? (
+            ) : activeMedia.kind === "video" ? (
+              <video key={activeMedia.uri} src={activeMedia.uri} controls className="h-[180px] w-full bg-black" />
+            ) : (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={cover} alt="" className="h-[180px] w-full object-cover" />
-            ) : null}
-            {galleryImages.length > 1 || youtubeIds.length > 1 ? (
+              <img src={activeMedia.uri} alt="" className="h-[180px] w-full object-cover" />
+            )}
+            {media.length > 1 ? (
               <div className="mt-2.5 flex gap-2 overflow-x-auto">
-                {youtubeIds.slice(youtubeIds[0] ? 1 : 0).map((id) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    key={id}
-                    src={`https://img.youtube.com/vi/${id}/hqdefault.jpg`}
-                    alt=""
-                    className="h-16 w-24 shrink-0 rounded-lg object-cover"
-                  />
-                ))}
-                {galleryImages.slice(youtubeIds[0] ? 0 : 1).map((src) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={src} src={src} alt="" className="h-16 w-24 shrink-0 rounded-lg bg-[#F5F5F5] object-cover" />
-                ))}
+                {media.map((item) => {
+                  const key = mediaKeyOf(item);
+                  const thumb =
+                    item.kind === "youtube"
+                      ? `https://img.youtube.com/vi/${item.id}/hqdefault.jpg`
+                      : item.kind === "image"
+                        ? item.uri
+                        : null;
+                  const on = key === mediaKeyOf(activeMedia);
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setMediaKey(key)}
+                      className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-[#F5F5F5] ${
+                        on ? "border-2 border-[#FF5A00]" : "border-0"
+                      }`}
+                    >
+                      {thumb ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={thumb} alt="" className="h-full w-full object-cover" />
+                      ) : null}
+                      {item.kind !== "image" ? (
+                        <span className="absolute inset-0 flex items-center justify-center bg-black/30 text-white">
+                          <Play size={18} fill="currentColor" />
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
               </div>
             ) : null}
           </section>
@@ -322,8 +361,10 @@ export function DeveloperDetailView({
                       >
                         {a.iconUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={a.iconUrl} alt="" className="h-4 w-4 object-contain" />
-                        ) : null}
+                          <img src={a.iconUrl} alt="" className="h-6 w-6 object-contain" />
+                        ) : (
+                          <Check size={24} />
+                        )}
                         {a.label}
                       </span>
                     ))}
@@ -373,6 +414,21 @@ function PlanStat({ label, value }: { label: string; value: string }) {
       <p className="truncate text-[12px] font-medium text-[#94A3B8]">{label}</p>
       <p className="text-[14px] font-bold text-black">{value}</p>
     </div>
+  );
+}
+
+function mediaKeyOf(
+  item: { kind: "youtube"; id: string } | { kind: "image"; uri: string } | { kind: "video"; uri: string },
+) {
+  return item.kind === "youtube" ? `yt:${item.id}` : `${item.kind}:${item.uri}`;
+}
+
+function MapsPin() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
+      <path fill="#EA4335" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7z" />
+      <circle cx="12" cy="9" r="2.4" fill="#fff" />
+    </svg>
   );
 }
 
