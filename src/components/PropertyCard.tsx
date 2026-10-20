@@ -1,104 +1,156 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import type { SharedPropertyCard } from "@/lib/types";
-import { areaLabel, formatUpdated } from "@/lib/format";
+import type { SharedFloorPrice, SharedPropertyCard } from "@/lib/types";
+import { areaLabel } from "@/lib/format";
+
+const PRIMARY_RED = "#FF5A00";
+
+function formatFloorPrice(row: SharedFloorPrice) {
+  const status = String(row.status || "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "_");
+  const sold = Boolean(row.isSold) || status === "sold";
+  if (sold) return { text: "Sold", sold: true };
+  const price = row.price == null ? null : Number(row.price);
+  const onRequest =
+    status === "price_on_request" ||
+    status === "por" ||
+    status === "on_request" ||
+    price == null ||
+    !Number.isFinite(price) ||
+    price <= 0;
+  if (onRequest) return { text: "On request", sold: false };
+  if (price >= 10000000) return { text: `₹${(price / 10000000).toFixed(2)} Cr`, sold: false };
+  if (price >= 100000) return { text: `₹${(price / 100000).toFixed(2)} L`, sold: false };
+  return { text: `₹${price.toLocaleString("en-IN")}`, sold: false };
+}
 
 export function PropertyCard({
   item,
   href,
-  sharePath,
 }: {
   item: SharedPropertyCard;
   href?: string | null;
   sharePath?: string;
 }) {
-  const area = item.areaLabel || areaLabel(item.area);
-  const updated = formatUpdated(item.updatedAt || item.savedAt);
-  const pills = [
-    item.isVerified ? "Verified" : null,
-    item.postedByBadge,
-    item.buildingType,
-  ].filter((value): value is string => !!value);
-  const resolvedSharePath = sharePath || href || `/l/${item.shareCode || item.id}`;
-  const bodyClass = "block px-4 pt-4";
-  const body = (
+  const [expanded, setExpanded] = useState(false);
+  const area = item.areaLabel || areaLabel(item.area) || "—";
+  const status = item.furnishing || item.constructionStatus || item.statusLabel || "—";
+  const bhk = item.bhkLabel || item.bhk;
+  const tags = [item.postedByBadge, item.buildingType].filter(
+    (value): value is string => !!value,
+  );
+  const floors = item.floorPricing || [];
+  const gradient = item.isVerified
+    ? "linear-gradient(to bottom, rgba(232, 193, 114, 0.35), rgba(255, 255, 255, 0))"
+    : "linear-gradient(to bottom, rgba(192, 192, 192, 0.35), rgba(255, 255, 255, 0))";
+
+  const info = (
     <>
-      <div className="flex items-start justify-between gap-2">
-        {item.propertyType ? (
-          <span className="rounded-md border border-[#F26A21] px-2.5 py-1 text-[12px] font-semibold text-[#F26A21]">
-            {item.propertyType}
-          </span>
-        ) : (
-          <span />
-        )}
-        {item.isVerified ? (
-          <span className="inline-flex items-center gap-1 rounded-md border border-[#e6e6e6] bg-white px-2 py-1 text-[11px] font-medium text-[#222]">
-            <Star />
-            Verified Listing
-          </span>
-        ) : null}
-      </div>
-
-      <h2 className="mt-3 text-[22px] font-extrabold leading-tight text-[#111]">
-        {item.displayTitle}
-      </h2>
+      <h2 className="text-[18px] font-bold leading-tight text-black">{item.displayTitle}</h2>
       {item.locationLine ? (
-        <p className="mt-1 text-[13px] text-[#8d8d8d]">{item.locationLine}</p>
+        <p className="mt-1 text-[14px] font-medium text-[#666]">{item.locationLine}</p>
       ) : null}
-      {item.priceLabel ? (
-        <p className="mt-2 text-[18px] font-extrabold text-[#F26A21]">{item.priceLabel}</p>
-      ) : null}
-
-      <div className="mt-4 border-y border-[#efe8d8] py-3">
-        <div className="grid grid-cols-3 gap-1">
-          <Spec icon={<AreaIcon />} label="Carpet Area" value={area || "—"} />
-          <Spec
-            icon={<PulseIcon />}
-            label="Status"
-            value={item.furnishing || item.constructionStatus || item.statusLabel || "—"}
-          />
-          <Spec icon={<FloorIcon />} label="Floor" value={item.floor || "—"} />
-        </div>
-        <div className="mt-2 flex justify-center text-[#F26A21]">
-          <ChevronDown />
-        </div>
-      </div>
-
-      {pills.length ? (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {pills.map((pill) => (
-            <span
-              key={pill}
-              className="inline-flex items-center gap-1.5 rounded-md border border-[#e4e4e4] bg-white px-2.5 py-1 text-[12px] text-[#333]"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#2ecc71]" />
-              {pill}
+      {bhk || item.priceLabel ? (
+        <p className="mt-1 flex min-w-0 items-center text-[14px] font-medium text-[#666]">
+          {bhk ? <span className="min-w-0 truncate">{bhk}</span> : null}
+          {item.priceLabel ? (
+            <span className="min-w-0 truncate">
+              {bhk ? "  |  " : ""}
+              <span className="font-bold text-black">{item.priceLabel}</span>
             </span>
-          ))}
-        </div>
-      ) : null}
-
-      {updated ? (
-        <p className="mt-3 text-[12px] text-[#9a9a9a]">Updated: {updated}</p>
+          ) : null}
+        </p>
       ) : null}
     </>
   );
 
   return (
-    <article className="overflow-hidden rounded-[22px] bg-[#FBF6EA] shadow-[0_4px_18px_rgba(40,30,10,0.06)]">
-      {href ? (
-        <Link href={href} className={bodyClass}>
-          {body}
-        </Link>
-      ) : (
-        <div className={bodyClass}>{body}</div>
-      )}
+    <article className="relative overflow-hidden rounded-[15px] border border-[#F0E0B0] bg-[#FFFBF5] p-[15px]">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[120px]"
+        style={{ background: gradient }}
+      />
 
-      <div className="flex items-center gap-2.5 px-4 pb-4 pt-3">
-        <IconButton label="Save" />
-        <ShareButton title={item.displayTitle} path={resolvedSharePath} />
+      <div className="relative">
+        {item.propertyType ? (
+          <div className="mb-2.5 flex items-start justify-between gap-2.5">
+            <span
+              className="rounded border bg-white px-2.5 py-1 text-[12px] font-bold"
+              style={{ borderColor: PRIMARY_RED, color: PRIMARY_RED }}
+            >
+              {item.propertyType}
+            </span>
+          </div>
+        ) : null}
+
+        {href ? (
+          <Link href={href} className="mb-3 block">
+            {info}
+          </Link>
+        ) : (
+          <div className="mb-3">{info}</div>
+        )}
+
+        <div className="mb-2.5 border-y border-[#F0E0B0] pb-2 pt-3">
+          <div className="flex gap-5 overflow-x-auto">
+            <Spec icon={<MaximizeIcon />} label="Carpet Area" value={area} />
+            <Spec icon={<ActivityIcon />} label="Status" value={status} />
+            <Spec icon={<LayersIcon />} label="Floor" value={item.floor || "—"} />
+          </div>
+
+          <button
+            type="button"
+            aria-expanded={expanded}
+            aria-label={expanded ? "Collapse details" : "Expand details"}
+            onClick={() => setExpanded((open) => !open)}
+            className="mx-auto mt-1.5 flex p-1"
+            style={{ color: PRIMARY_RED }}
+          >
+            <Chevron open={expanded} />
+          </button>
+
+          {expanded && floors.length > 0 ? (
+            <div className="mt-2 border-t border-[#F0E0B0] pt-2">
+              <p className="mb-0.5 text-[12px] font-bold text-black">Floor-wise pricing</p>
+              {floors.map((row, index) => {
+                const price = formatFloorPrice(row);
+                const n = row.floorNumber ?? index + 1;
+                return (
+                  <div
+                    key={`floor-${n}-${index}`}
+                    className="flex items-center justify-between gap-3 py-0.5"
+                  >
+                    <span className="text-[12px] font-medium text-[#888]">Floor {n}</span>
+                    <span
+                      className="text-[12px] font-semibold"
+                      style={{ color: price.sold ? PRIMARY_RED : "#000" }}
+                    >
+                      {price.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+
+        {tags.length ? (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E5E5] bg-white px-3 py-1.5 text-[12px] font-medium text-black"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2ecc71]" />
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
     </article>
   );
@@ -114,104 +166,51 @@ function Spec({
   value: string;
 }) {
   return (
-    <div className="min-w-0">
-      <div className="text-[#888]">{icon}</div>
-      <p className="mt-1 text-[9px] font-semibold uppercase tracking-wide text-[#9a9a9a]">
-        {label}
-      </p>
-      <p className="truncate text-[13px] font-bold text-[#111]">{value}</p>
+    <div className="flex shrink-0 items-center gap-2">
+      <span className="text-[#666]">{icon}</span>
+      <div>
+        <p className="text-[11px] font-medium uppercase text-[#999]">{label}</p>
+        <p className="text-[12px] font-bold text-black">{value}</p>
+      </div>
     </div>
   );
 }
 
-function ShareButton({ title, path }: { title: string; path: string }) {
+function Chevron({ open }: { open: boolean }) {
   return (
-    <button
-      type="button"
-      aria-label="Share"
-      onClick={() => {
-        const url =
-          typeof window !== "undefined" ? `${window.location.origin}${path}` : path;
-        if (navigator.share) {
-          void navigator.share({ title, url });
-          return;
-        }
-        void navigator.clipboard?.writeText(url);
-      }}
-      className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#e4e4e4] bg-white text-[#333]"
-    >
-      <ShareIcon />
-    </button>
-  );
-}
-
-function IconButton({ label }: { label: string }) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#e4e4e4] bg-white text-[#333]"
-    >
-      <BookmarkIcon />
-    </button>
-  );
-}
-
-function Star() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="#F26A21" aria-hidden>
-      <path d="M12 3.6 14.5 9l5.9.7-4.4 4 1.2 5.8L12 16.8 6.8 19.5l1.2-5.8-4.4-4 5.9-.7L12 3.6Z" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d={open ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"}
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
 
-function ChevronDown() {
+function MaximizeIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" strokeWidth="1.8" />
     </svg>
   );
 }
 
-function AreaIcon() {
+function ActivityIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4" stroke="#888" strokeWidth="1.8" />
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M3 12h4l2-5 4 10 2-5h6" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function PulseIcon() {
+function LayersIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M3 12h4l2-5 4 10 2-5h6" stroke="#888" strokeWidth="1.8" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function FloorIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M5 19h14M7 15h10M9 11h6M11 7h2" stroke="#888" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function BookmarkIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M7 4h10a1 1 0 0 1 1 1v16l-6-3-6 3V5a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  );
-}
-
-function ShareIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="18" cy="5" r="2.2" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="6" cy="12" r="2.2" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="18" cy="19" r="2.2" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M8 11.2 16 6.4M8 12.8 16 17.6" stroke="currentColor" strokeWidth="1.8" />
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M12 3l9 5-9 5-9-5 9-5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M3 12l9 5 9-5M3 17l9 5 9-5" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
     </svg>
   );
 }

@@ -3,6 +3,18 @@ import { AppShell } from "@/components/AppShell";
 import { fetchSharedCompare, type SharedCompareItem } from "@/lib/api";
 import { listingShareMetadata } from "@/lib/seo";
 import { resolveSiteUrl } from "@/lib/site";
+import {
+  MapPin,
+  IndianRupee,
+  Shield,
+  Clock,
+  Grid,
+  Maximize2,
+  Home,
+  Layers,
+  FileText,
+  Star,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +42,7 @@ const UPPERCASE_WORDS = new Set([
   "cc",
   "noc",
 ]);
+
 const WORD_OVERRIDES: Record<string, string> = {
   sqft: "Sq.ft",
   sqyd: "Sq.yd",
@@ -66,6 +79,7 @@ const dash = (v: unknown) => (v == null || v === "" ? "—" : String(v));
 type Row = {
   id: string;
   label: string;
+  icon: any;
   isAmenities?: boolean;
   value: (p: SharedCompareItem) => string | string[];
 };
@@ -74,40 +88,87 @@ const ROWS: Row[] = [
   {
     id: "location",
     label: "LOCATION",
+    icon: MapPin,
     value: (p) => dash(humanize(p.location)),
   },
-  { id: "price", label: "PRICE", value: (p) => p.price || "Price On Request" },
+  {
+    id: "price",
+    label: "PRICE",
+    icon: IndianRupee,
+    value: (p) => p.price || "Price On Request",
+  },
   {
     id: "status",
     label: "STATUS",
+    icon: Shield,
     value: (p) => dash(humanize(p.projectStatus)),
   },
   {
     id: "possession",
     label: "POSSESSION",
+    icon: Clock,
     value: (p) => dash(humanize(p.possession)),
   },
   {
     id: "bhk",
     label: "BHK TYPES",
+    icon: Grid,
     value: (p) =>
       p.bhkTypes.length ? p.bhkTypes.map(humanize).join(", ") : "—",
   },
-  { id: "area", label: "AREA", value: (p) => dash(humanize(p.area)) },
-  { id: "units", label: "UNITS", value: (p) => dash(p.units) },
-  { id: "towers", label: "TOWERS", value: (p) => dash(p.towers) },
+  {
+    id: "area",
+    label: "AREA",
+    icon: Maximize2,
+    value: (p) => dash(humanize(p.area)),
+  },
+  {
+    id: "units",
+    label: "UNITS",
+    icon: Home,
+    value: (p) => dash(p.units),
+  },
+  {
+    id: "towers",
+    label: "TOWERS",
+    icon: Layers,
+    value: (p) => dash(p.towers),
+  },
   {
     id: "rera",
     label: "RERA",
+    icon: FileText,
     value: (p) => dash(p.reraNumber?.toUpperCase()),
   },
   {
     id: "amenities",
     label: "AMENITIES",
+    icon: Star,
     isAmenities: true,
     value: (p) => p.amenities.slice(0, 6).map(humanize),
   },
 ];
+
+const SectionHeader = ({
+  title,
+  icon: IconComponent,
+}: {
+  title: string;
+  icon: any;
+}) => (
+  <div className="my-4 flex items-center px-4">
+    <div className="h-px flex-1 bg-[#E5E7EB]" />
+    <div className="flex w-[140px] items-center justify-center px-3">
+      <div className="mr-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#0F172A]">
+        <IconComponent size={title === "PRICE" ? 14 : 12} color="#fff" />
+      </div>
+      <span className="text-[12px] font-bold tracking-wider text-[#0F172A]">
+        {title}
+      </span>
+    </div>
+    <div className="h-px flex-1 bg-[#E5E7EB]" />
+  </div>
+);
 
 export async function generateMetadata({
   params,
@@ -164,7 +225,7 @@ export default async function ShareComparePage({ params }: PageProps) {
 
   const title = (
     <>
-      Compare <span className="text-[#C8102E]">Projects</span>
+      Compare <span className="text-[#FF5A00]">Projects</span>
     </>
   );
 
@@ -186,27 +247,31 @@ export default async function ShareComparePage({ params }: PageProps) {
   }
 
   const gridCols = {
-    gridTemplateColumns: `repeat(${projects.length}, minmax(130px, 1fr))`,
+    gridTemplateColumns: `repeat(${projects.length}, minmax(160px, 1fr))`,
   };
 
   return (
     <AppShell title={title}>
+      {/* Top Title Section */}
       <div className="pb-5 pt-2 text-center">
         <p className="font-serif text-[18px] text-[#1A1A1A]">
-          Selected <span className="font-bold text-[#C8102E]">Items</span>
+          Selected <span className="font-bold text-[#FF5A00]">Items</span>
         </p>
         <p className="mt-1 text-[12px] font-bold tracking-wider text-[#9CA3AF]">
-          {projects.length} Developer Projects Side By Side
+          Compare Up To {projects.length} Developer Projects
         </p>
       </div>
 
-      <div className="-mx-1 overflow-x-auto pb-6">
-        <div className="min-w-full overflow-scroll rounded-2xl border border-[#E5E7EB] bg-white shadow-sm">
+      <div className="overflow-x-auto px-3 pb-6">
+        <div className="min-w-full overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-sm mb-28">
+          {/* Projects Header Row (Images & Titles) */}
           <div className="grid" style={gridCols}>
             {projects.map((p, i) => (
               <div
                 key={p.id}
-                className={`flex flex-col items-center p-2.5 ${i !== projects.length - 1 ? "border-r border-[#F3F4F6]" : ""}`}
+                className={`flex flex-col items-center p-2.5 ${
+                  i !== projects.length - 1 ? "border-r border-[#F3F4F6]" : ""
+                }`}
               >
                 {p.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -219,7 +284,7 @@ export default async function ShareComparePage({ params }: PageProps) {
                   <div className="mb-2.5 aspect-square w-full rounded-lg bg-[#f0f0f0]" />
                 )}
                 {p.developer?.name ? (
-                  <p className="line-clamp-1 text-center text-[12px] font-bold uppercase text-[#C8102E]">
+                  <p className="line-clamp-1 text-center text-[12px] font-bold uppercase text-[#FF5A00]">
                     {p.developer.name}
                   </p>
                 ) : null}
@@ -230,42 +295,43 @@ export default async function ShareComparePage({ params }: PageProps) {
             ))}
           </div>
 
+          {/* Dynamic Rows */}
           {ROWS.map((row) => (
             <div key={row.id}>
-              <div className="my-4 flex items-center px-4">
-                <div className="h-px flex-1 bg-[#E5E7EB]" />
-                <div className="flex w-[140px] items-center justify-center px-3">
-                  <span className="text-[12px] font-bold tracking-wider text-[#0F172A]">
-                    {row.label}
-                  </span>
-                </div>
-                <div className="h-px flex-1 bg-[#E5E7EB]" />
-              </div>
+              <SectionHeader title={row.label} icon={row.icon} />
               <div className="grid" style={gridCols}>
                 {projects.map((p, i) => {
                   const value = row.value(p);
                   return (
                     <div
                       key={`${p.id}-${row.id}`}
-                      className={`flex flex-col items-center px-2.5 pb-2.5 ${i !== projects.length - 1 ? "border-r border-[#F3F4F6]" : ""}`}
+                      className={`flex flex-col items-center px-2.5 pb-2.5 ${
+                        i !== projects.length - 1
+                          ? "border-r border-[#F3F4F6]"
+                          : ""
+                      }`}
                     >
                       {row.isAmenities && Array.isArray(value) ? (
                         value.length ? (
                           <div className="flex w-full flex-col gap-1.5">
                             {value.map((a) => (
-                              <span
+                              <div
                                 key={a}
-                                className="truncate rounded border border-[#E2E8F0] bg-[#F8FAFC] px-1.5 py-1 text-center text-[10px] font-bold text-[#64748B]"
+                                className="w-full rounded border border-[#E2E8F0] bg-[#F8FAFC] px-1.5 py-1 text-center"
                               >
-                                {a}
-                              </span>
+                                <span className="block truncate text-[10px] font-bold text-[#64748B]">
+                                  {a}
+                                </span>
+                              </div>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-[12px] text-[#1A1A1A]">—</span>
+                          <span className="text-[12px] font-regular text-[#1A1A1A] text-center">
+                            —
+                          </span>
                         )
                       ) : (
-                        <span className="line-clamp-2 text-center flex-wrap flex-row text-[12px] leading-[18px] text-[#1A1A1A]">
+                        <span className="line-clamp-2 text-center text-[12px] font-regular leading-[18px] text-[#1A1A1A]">
                           {String(value).replace(/\n/g, " ")}
                         </span>
                       )}

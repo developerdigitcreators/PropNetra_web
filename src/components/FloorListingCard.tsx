@@ -1,7 +1,11 @@
 "use client";
 
+import { useState, type ReactNode } from "react";
 import type { SharedFloorPrice, SharedPropertyCard } from "@/lib/types";
-import { areaLabel, formatUpdated } from "@/lib/format";
+import { areaLabel } from "@/lib/format";
+
+const PRIMARY = "#FF8A00";
+const PRIMARY_RED = "#FF5A00";
 
 const ordinalFloor = (n: number) => {
   const v = n % 100;
@@ -54,7 +58,6 @@ function floorRows(rows: SharedFloorPrice[]) {
 /** Direct Builder Floor listing card, mirroring the app's `BuilderFloorListingCard`. */
 export function FloorListingCard({
   item,
-  sharePath,
 }: {
   item: SharedPropertyCard;
   sharePath?: string;
@@ -62,16 +65,15 @@ export function FloorListingCard({
   const images = (item.images?.length ? item.images : item.imageUrls?.length ? item.imageUrls : [item.imageUrl]).filter(
     (src): src is string => !!src,
   );
+  const [expanded, setExpanded] = useState(false);
   const floors = floorRows(item.floorPricing || []);
   const area = item.areaLabel || areaLabel(item.area) || "—";
   const status = item.constructionStatus || item.furnishing || "—";
-  const updated = formatUpdated(item.updatedAt || item.savedAt);
-  const path = sharePath || `/l/${item.shareCode || item.id}`;
 
   return (
     <article className="overflow-hidden rounded-[18px] bg-white shadow-[0_4px_18px_rgba(40,30,10,0.08)]">
       <div className="relative">
-        <div className="flex h-[200px] snap-x snap-mandatory overflow-x-auto">
+        <div className="flex h-[180px] snap-x snap-mandatory overflow-x-auto">
           {images.length ? (
             images.map((src, i) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -87,7 +89,7 @@ export function FloorListingCard({
           )}
         </div>
         <svg
-          className="pointer-events-none absolute bottom-0 left-0 h-[40px] w-full"
+          className="pointer-events-none absolute bottom-0 left-0 h-[45px] w-full"
           viewBox="0 0 500 30"
           preserveAspectRatio="none"
           aria-hidden
@@ -95,8 +97,8 @@ export function FloorListingCard({
           <path d="M0,30 L0,20 Q250,0 500,20 L500,30 Z" fill="#ffffff" />
         </svg>
         {item.propertyType ? (
-          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-[#111]">
-            <span className="h-2 w-2 rounded-full bg-[#F26A21]" />
+          <span className="absolute left-[15px] top-[15px] inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-black">
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: PRIMARY }} />
             {item.propertyType}
           </span>
         ) : null}
@@ -111,17 +113,24 @@ export function FloorListingCard({
       <div className="px-4 pt-1">
         <h2 className="text-[18px] font-extrabold leading-tight text-[#111]">{item.displayTitle}</h2>
         {item.locationLine ? <p className="mt-1 text-[13px] text-[#8d8d8d]">{item.locationLine}</p> : null}
-        {updated ? (
-          <span className="mt-2 inline-block rounded-md bg-[#FFF4EC] px-2 py-1 text-[11px] text-[#7a4a2a]">
-            Updated On: <span className="font-bold">{updated}</span>
-          </span>
-        ) : null}
 
-        <div className="mt-3 grid grid-cols-3 gap-1 border-t border-[#f1f1f1] pt-3">
-          <Spec label="CARPET AREA" value={area} />
-          <Spec label="STATUS" value={status} />
-          <Spec label="FLOOR" value={item.floor || "—"} />
+        <div className={`mt-3 overflow-x-auto border-t border-[#f1f1f1] pt-3 ${expanded ? "border-b" : ""}`}>
+          <div className="flex gap-5">
+            <Spec icon={<MaximizeIcon />} label="Carpet Area" value={area} />
+            <Spec icon={<ActivityIcon />} label="Status" value={status} />
+            <Spec icon={<LayersIcon />} label="Floor" value={item.floor || "—"} />
+          </div>
         </div>
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-label={expanded ? "Collapse details" : "Expand details"}
+          onClick={() => setExpanded((open) => !open)}
+          className="mx-auto mt-1 flex p-1"
+          style={{ color: PRIMARY }}
+        >
+          <Chevron open={expanded} />
+        </button>
 
         {floors.length ? (
           <div className="mt-3 grid grid-cols-4 overflow-hidden rounded-lg border border-[#e8e8e8]">
@@ -131,7 +140,10 @@ export function FloorListingCard({
                 className={`px-1.5 py-2 text-center ${i % 4 !== 0 ? "border-l border-[#e8e8e8]" : ""} ${i >= 4 ? "border-t border-[#e8e8e8]" : ""}`}
               >
                 <p className="text-[10px] text-[#8d8d8d]">{f.label}</p>
-                <p className={`truncate text-[12px] font-bold ${f.isSold ? "text-[#C8102E]" : "text-[#111]"}`}>
+                <p
+                  className="truncate text-[12px] font-bold text-[#111]"
+                  style={f.isSold ? { color: PRIMARY_RED } : undefined}
+                >
                   {f.value}
                 </p>
               </div>
@@ -140,40 +152,67 @@ export function FloorListingCard({
         ) : null}
       </div>
 
-      <div className="flex items-center gap-2.5 px-4 pb-4 pt-3">
-        <button
-          type="button"
-          aria-label="Save"
-          className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#e4e4e4] bg-white text-[#333]"
-        >
-          <BookmarkIcon />
-        </button>
-        <button
-          type="button"
-          aria-label="Share"
-          onClick={() => {
-            const url = typeof window !== "undefined" ? `${window.location.origin}${path}` : path;
-            if (navigator.share) {
-              void navigator.share({ title: item.displayTitle, url });
-              return;
-            }
-            void navigator.clipboard?.writeText(url);
-          }}
-          className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#e4e4e4] bg-white text-[#333]"
-        >
-          <ShareIcon />
-        </button>
-      </div>
+      <div className="h-4" />
     </article>
   );
 }
 
-function Spec({ label, value }: { label: string; value: string }) {
+function Spec({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+}) {
   return (
-    <div className="min-w-0">
-      <p className="text-[9px] font-semibold uppercase tracking-wide text-[#9a9a9a]">{label}</p>
-      <p className="truncate text-[13px] font-bold text-[#111]">{value}</p>
+    <div className="flex shrink-0 items-center gap-2">
+      <span className="text-[#666]">{icon}</span>
+      <div>
+        <p className="text-[11px] font-medium uppercase text-[#999]">{label}</p>
+        <p className="text-[13px] font-bold text-[#111]">{value}</p>
+      </div>
     </div>
+  );
+}
+
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d={open ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"}
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function MaximizeIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function ActivityIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M3 12h4l2-5 4 10 2-5h6" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function LayersIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M12 3l9 5-9 5-9-5 9-5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M3 12l9 5 9-5M3 17l9 5 9-5" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -186,21 +225,3 @@ function ImageIcon() {
   );
 }
 
-function BookmarkIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M7 4h10a1 1 0 0 1 1 1v16l-6-3-6 3V5a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  );
-}
-
-function ShareIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="18" cy="5" r="2.2" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="6" cy="12" r="2.2" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="18" cy="19" r="2.2" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M8 11.2 16 6.4M8 12.8 16 17.6" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  );
-}

@@ -6,6 +6,7 @@ type Place = {
   name?: string | null;
   address?: string | null;
   distanceKm?: number | null;
+  distance?: string | null;
 };
 
 const PREVIEW = 4;
@@ -15,7 +16,7 @@ export function LocationTabs({
 }: {
   tabs: { tab: string; places: unknown[] }[];
 }) {
-  const usable = tabs.filter((t) => t.tab && t.places.length);
+  const usable = tabs.filter((t) => t.tab && Array.isArray(t.places) && t.places.length);
   const [active, setActive] = useState(0);
   const [showAll, setShowAll] = useState(false);
   if (!usable.length) return null;
@@ -24,50 +25,48 @@ export function LocationTabs({
   const visible = showAll ? places : places.slice(0, PREVIEW);
 
   return (
-    <div className="mt-3">
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
-        {usable.map((t, i) => (
-          <button
-            key={t.tab}
-            type="button"
-            onClick={() => {
-              setActive(i);
-              setShowAll(false);
-            }}
-            className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12px] font-semibold ${
-              i === active
-                ? "border-[#C8102E] bg-[#C8102E] text-white"
-                : "border-[#E2E8F0] bg-white text-[#475569]"
-            }`}
-          >
-            {t.tab}
-          </button>
+    <div>
+      <div className="mb-3 flex gap-2 overflow-x-auto rounded-xl bg-[#F8FAFC] p-1.5">
+        {usable.map((t, i) => {
+          const on = i === active;
+          return (
+            <button
+              key={t.tab}
+              type="button"
+              onClick={() => {
+                setActive(i);
+                setShowAll(false);
+              }}
+              className={`shrink-0 rounded-[10px] border bg-white px-3 py-2 text-[12px] ${
+                on ? "border-black font-bold text-black" : "border-[#9E9E9E]/15 font-medium text-[#64748B]"
+              }`}
+            >
+              {t.tab}
+            </button>
+          );
+        })}
+      </div>
+      <div className="flex flex-col gap-1">
+        {visible.map((p, i) => (
+          <div key={`${p.name}-${i}`} className="flex items-center gap-3 py-2">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center text-[#FF5A00]">➤</span>
+            <p className="min-w-0 flex-1 truncate text-[14px] text-black">{p.name}</p>
+            <span className="shrink-0 text-[13px] text-[#64748B]">
+              {p.distance ||
+                (p.distanceKm != null && Number.isFinite(Number(p.distanceKm))
+                  ? `${Number(p.distanceKm).toFixed(1)} km`
+                  : "")}
+            </span>
+          </div>
         ))}
       </div>
-      <ul className="mt-3 divide-y divide-[#F1F5F9] rounded-xl border border-[#E2E8F0] bg-white">
-        {visible.map((p, i) => (
-          <li key={`${p.name}-${i}`} className="flex items-center justify-between gap-3 px-3.5 py-3">
-            <div className="min-w-0">
-              <p className="truncate text-[13px] font-semibold text-[#1A1A1A]">{p.name}</p>
-              {p.address ? (
-                <p className="truncate text-[11px] text-[#94A3B8]">{p.address}</p>
-              ) : null}
-            </div>
-            {p.distanceKm != null && Number.isFinite(Number(p.distanceKm)) ? (
-              <span className="shrink-0 text-[12px] font-bold text-[#C8102E]">
-                {Number(p.distanceKm).toFixed(1)} km
-              </span>
-            ) : null}
-          </li>
-        ))}
-      </ul>
       {places.length > PREVIEW ? (
         <button
           type="button"
           onClick={() => setShowAll((v) => !v)}
-          className="mt-2 text-[12px] font-bold text-[#C8102E]"
+          className="mt-2 w-full rounded-2xl bg-black py-2.5 text-[14px] font-semibold text-white"
         >
-          {showAll ? "Show less" : `View all ${places.length}`}
+          {showAll ? "View Less" : "View More"}
         </button>
       ) : null}
     </div>

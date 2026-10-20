@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { useRouter, usePathname } from "next/navigation";
-import { Home, Users, Activity, UserCircle, PlusCircle, Info, Layers, DollarSign, Calendar, MapPin, Bell, Menu, Play, ChevronDown, Grid, List, Award, Zap, Crown } from "lucide-react";
+import { Home, Users, Activity, UserCircle, PlusCircle, Info, Layers, Calendar, MapPin, Bell, Menu, Play, ChevronDown, Grid, List, Award, Zap, Crown } from "lucide-react";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -90,7 +90,6 @@ const Header = () => {
     { name: "Home", href: "/#home", icon: <Home size={24} /> },
     { name: "About Us", href: "/#about", icon: <Info size={24} /> },
     { name: "Marketplace", href: "/marketplace", icon: <Layers size={24} /> },
-    { name: "Pricing Plans", href: "/pricing", icon: <DollarSign size={24} /> },
     { name: "Join the Network", href: "/signup", icon: <PlusCircle size={24} /> },
   ];
 
@@ -218,13 +217,6 @@ const Header = () => {
                         id: "features",
                         page: null,
                         icon: <Layers size={18} />,
-                      },
-                      {
-                        name: "Pricing",
-                        href: "/pricing",
-                        id: "pricing",
-                        page: "/pricing",
-                        icon: <DollarSign size={18} />,
                       },
                       {
                         name: "Book Demo",

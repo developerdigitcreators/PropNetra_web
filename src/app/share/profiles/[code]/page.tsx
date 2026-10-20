@@ -8,17 +8,21 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ code: string }>;
+  searchParams: Promise<{ v?: string | string[] }>;
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { code } = await params;
+  const { v } = await searchParams;
+  const version = (Array.isArray(v) ? v[0] : v)?.replace(/[^A-Za-z0-9_-]/g, "");
   const origin = await resolveSiteUrl();
   try {
     const profile = await fetchPublicProfile(code);
     return profileMetadata({
       og: profile.og,
       fallbackDescription: profile.designation || "PropNetra profile",
-      path: `/u/${code}`,
+      // WhatsApp caches by og:url; keep ?v= so a new version gets a fresh preview.
+      path: version ? `/u/${code}?v=${version}` : `/u/${code}`,
       origin,
     });
   } catch {
