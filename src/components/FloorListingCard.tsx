@@ -69,6 +69,7 @@ export function FloorListingCard({
   const floors = floorRows(item.floorPricing || []);
   const area = item.areaLabel || areaLabel(item.area) || "—";
   const status = item.constructionStatus || item.furnishing || "—";
+  const address = [item.location, item.city].filter(Boolean).join(", ");
 
   return (
     <article className="overflow-hidden rounded-[18px] bg-white shadow-[0_4px_18px_rgba(40,30,10,0.08)]">
@@ -112,7 +113,7 @@ export function FloorListingCard({
 
       <div className="px-4 pt-1">
         <h2 className="text-[18px] font-extrabold leading-tight text-[#111]">{item.displayTitle}</h2>
-        {item.locationLine ? <p className="mt-1 text-[13px] text-[#8d8d8d]">{item.locationLine}</p> : null}
+        {address ? <p className="mt-1 text-[13px] text-[#8d8d8d]">{address}</p> : null}
 
         <div className={`mt-3 overflow-x-auto border-t border-[#f1f1f1] pt-3 ${expanded ? "border-b" : ""}`}>
           <div className="flex gap-5">
