@@ -131,12 +131,25 @@ export type SharedDeveloperProject = {
   };
   geo: { lat: number; lng: number } | null;
   header: { images: string[]; videos: string[]; youtube: string[] };
+  areaType: string | null;
+  areaTypeLabel: string | null;
+  charges: { value: string; label: string } | null;
   priceRange: {
     min: number | null;
     max: number | null;
     minLabel: string | null;
     maxLabel: string | null;
   };
+  availableUnits: {
+    id: string;
+    bhk: string;
+    extraSpace1: string | null;
+    extraSpace2: string | null;
+    label: string;
+    size: number;
+    price: number;
+    priceLabel: string;
+  }[];
   projectStatus: string | null;
   possession: string | null;
   about: string | null;
@@ -147,14 +160,23 @@ export type SharedDeveloperProject = {
     bhkTypes: string[];
     area: string | number | null;
   };
+  labels: {
+    area: string | null;
+    floorPlanArea: string | null;
+  };
   reraNumber: string | null;
   floorPlans: {
     name: string;
+    unitId: string | null;
     imageUrl: string | null;
+    extraSpaces: string | null;
+    bhk: string | null;
     bedrooms: number | null;
     price: number | null;
     priceLabel: string | null;
+    size: number | null;
     area: string | number | null;
+    areaTypeLabel: string | null;
   }[];
   gallery: { images: string[]; videos: string[]; youtube: string[] };
   amenities: { value: string; label: string; iconUrl: string | null }[];

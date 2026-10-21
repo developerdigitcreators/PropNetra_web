@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
 import { fetchSharedDeveloperProject } from "@/lib/api";
+import { withRupee } from "@/lib/price";
 import { listingShareMetadata } from "@/lib/seo";
 import { resolveSiteUrl } from "@/lib/site";
 import { DeveloperDetailView, type DetailSlide } from "./DeveloperDetailView";
@@ -69,11 +70,17 @@ function formatBhkLine(types: string[]): string {
   return [bhk, ...others].filter(Boolean).join(", ");
 }
 
-function minAreaLabel(raw: unknown): string {
-  const s = raw == null ? "" : humanize(raw);
-  const m = s.match(/^([\d.,]+)\s*[-–—]\s*[\d.,]+\s*(.*)$/);
-  if (!m) return s;
-  return m[2] ? `${m[1]} ${m[2]}` : m[1];
+function areaStat(raw: unknown): string {
+  if (raw == null || raw === "") return "";
+  if (typeof raw === "number") return `${raw.toLocaleString("en-IN")} Sq.Ft`;
+  return String(raw).trim();
+}
+
+function rangeLine(minLabel: string | null, maxLabel: string | null): string {
+  const min = withRupee(minLabel);
+  const max = withRupee(maxLabel);
+  if (min && max && min !== max) return `${min} - ${max}`;
+  return min || max;
 }
 
 function splitTitle(title: string): [string, string] {
@@ -177,7 +184,7 @@ export default async function ShareDeveloperProjectPage({ params }: PageProps) {
     },
     { label: "Open Space", value: p.stats.openSpace != null ? humanize(p.stats.openSpace) : "" },
     { label: "BHK Types", value: formatBhkLine(p.stats.bhkTypes) },
-    { label: "Area", value: minAreaLabel(p.stats.area) },
+    { label: p.labels?.area || p.areaTypeLabel || "Area", value: areaStat(p.stats.area) },
   ].filter((s) => s.value);
 
   return (
@@ -197,14 +204,36 @@ export default async function ShareDeveloperProjectPage({ params }: PageProps) {
         possession={possessionLabel(p.possession)}
         about={p.about}
         specs={specs}
-        floorPlans={p.floorPlans.map((f) => ({
-          name: humanize(f.name) || "Plan",
-          imageUrl: f.imageUrl,
-          bedrooms: f.bedrooms,
-          priceLabel: f.priceLabel,
-          area: f.area != null ? humanize(f.area) : "",
+        priceLine={rangeLine(p.priceRange?.minLabel ?? null, p.priceRange?.maxLabel ?? null)}
+        units={(p.availableUnits ?? []).map((unit) => ({
+          id: unit.id,
+          label: unit.label,
+          size: unit.size,
+          price: unit.price,
+          priceLabel: unit.priceLabel,
         }))}
-        areaLabel="Carpet Area"
+        chargesLabel={p.charges?.label || null}
+        floorPlans={(p.floorPlans ?? []).map((f) => {
+          const usesUnits =
+            f.size != null || f.unitId != null || f.extraSpaces != null || f.areaTypeLabel != null || f.bhk != null;
+          const sizeText =
+            f.size != null
+              ? `${Number(f.size).toLocaleString("en-IN")} Sq.Ft`
+              : f.area != null
+                ? humanize(f.area)
+                : "";
+          return {
+            name: f.name || "Plan",
+            imageUrl: f.imageUrl,
+            extraSpaces: f.extraSpaces ?? null,
+            usesUnits,
+            bedrooms: f.bedrooms ?? null,
+            price: f.price ?? null,
+            priceLabel: f.priceLabel,
+            areaLabel: f.areaTypeLabel || p.labels?.floorPlanArea || p.areaTypeLabel || "Area",
+            area: sizeText,
+          };
+        })}
         galleryImages={p.gallery.images}
         youtubeIds={youtube}
         amenities={p.amenities}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, Clock, Home, Image as ImageIcon, Play, Video } from "lucide-react";
+import { Check, Clock, Home, Image as ImageIcon, Info, Play, Video, X } from "lucide-react";
+import { rupeeWords, withRupee } from "@/lib/price";
 import { LocationTabs } from "./LocationTabs";
 
 const RED = "#FF5A00";
@@ -13,9 +14,21 @@ export type DetailSlide =
 export type DetailPlan = {
   name: string;
   imageUrl: string | null;
+  extraSpaces: string | null;
+  usesUnits: boolean;
   bedrooms: number | null;
+  price: number | null;
   priceLabel: string | null;
+  areaLabel: string;
   area: string;
+};
+
+export type DetailUnit = {
+  id: string;
+  label: string;
+  size: number;
+  price: number;
+  priceLabel: string;
 };
 
 export type DetailAmenity = { value: string; label: string; iconUrl: string | null };
@@ -35,8 +48,10 @@ export function DeveloperDetailView({
   possession,
   about,
   specs,
+  priceLine,
+  units,
+  chargesLabel,
   floorPlans,
-  areaLabel,
   galleryImages,
   youtubeIds,
   amenities,
@@ -57,8 +72,10 @@ export function DeveloperDetailView({
   possession: string;
   about: string | null;
   specs: { label: string; value: string }[];
+  priceLine: string;
+  units: DetailUnit[];
+  chargesLabel: string | null;
   floorPlans: DetailPlan[];
-  areaLabel: string;
   galleryImages: string[];
   youtubeIds: string[];
   amenities: DetailAmenity[];
@@ -66,9 +83,10 @@ export function DeveloperDetailView({
   geo: { lat: number; lng: number } | null;
 }) {
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [info, setInfo] = useState<"units" | "charges" | null>(null);
   const [slideIndex, setSlideIndex] = useState(0);
-  const [planName, setPlanName] = useState(floorPlans[0]?.name || "");
-  const plan = floorPlans.find((p) => p.name === planName) || floorPlans[0];
+  const [planIndex, setPlanIndex] = useState(0);
+  const plan = floorPlans[planIndex] || floorPlans[0];
   const media = useMemo(() => {
     const items: Array<
       | { kind: "youtube"; id: string }
@@ -186,6 +204,29 @@ export function DeveloperDetailView({
           ) : null}
         </div>
 
+        {priceLine || chargesLabel ? (
+          <div className="mt-3">
+            {priceLine ? (
+              <div className="flex items-center gap-2">
+                <p className="text-[20px] font-bold text-black">{priceLine}</p>
+                {units.length ? (
+                  <button type="button" aria-label="Available units" onClick={() => setInfo("units")} className="text-[#64748B]">
+                    <Info size={18} />
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+            {chargesLabel ? (
+              <div className="mt-1 flex items-center gap-2">
+                <p className="text-[13px] font-medium text-[#64748B]">{chargesLabel}</p>
+                <button type="button" aria-label="Charges" onClick={() => setInfo("charges")} className="text-[#64748B]">
+                  <Info size={16} />
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
         <div className="mt-4 flex items-center justify-around rounded-2xl border border-[#9E9E9E]/40 py-2.5">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#FDF7EE] text-[#B49164]">
@@ -261,13 +302,13 @@ export function DeveloperDetailView({
           <section className="pt-5">
             <SectionHead lead="Floor" accent="Plan" />
             <div className="flex gap-3 overflow-x-auto pb-1">
-              {floorPlans.map((item) => {
-                const on = item.name === plan.name;
+              {floorPlans.map((item, index) => {
+                const on = index === planIndex;
                 return (
                   <button
-                    key={item.name}
+                    key={`${item.name}-${index}`}
                     type="button"
-                    onClick={() => setPlanName(item.name)}
+                    onClick={() => setPlanIndex(index)}
                     className={`shrink-0 rounded-xl border px-4 py-2 text-[12px] font-bold ${
                       on ? "border-black bg-black text-white" : "border-[#9E9E9E]/15 bg-transparent text-black"
                     }`}
@@ -283,11 +324,14 @@ export function DeveloperDetailView({
                 <img src={plan.imageUrl} alt={plan.name} className="h-[250px] w-full rounded-lg object-cover" />
               ) : null}
               <div className="mt-4 flex items-center justify-between border-t border-[#F1F5F9] px-2 pt-2.5 text-center">
-                <PlanStat label="Bedrooms" value={plan.bedrooms != null ? String(plan.bedrooms) : "—"} />
+                <PlanStat
+                  label={plan.usesUnits ? "Extra Spaces" : "Bedrooms"}
+                  value={plan.usesUnits ? plan.extraSpaces || "—" : plan.bedrooms != null ? String(plan.bedrooms) : "—"}
+                />
                 <span className="h-8 w-px bg-[#F5F5F5]" />
-                <PlanStat label="Price" value={plan.priceLabel ? plan.priceLabel.replace(/^₹\s*/, "₹ ") : "On request"} />
+                <PlanStat label="Price" value={withRupee(plan.priceLabel) || "On request"} />
                 <span className="h-8 w-px bg-[#F5F5F5]" />
-                <PlanStat label={areaLabel} value={plan.area || "—"} />
+                <PlanStat label={plan.areaLabel} value={plan.area || "—"} />
               </div>
             </div>
           </section>
@@ -390,6 +434,37 @@ export function DeveloperDetailView({
         ) : null}
       </div>
       <style>{`@keyframes amenity { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+      {info ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center">
+          <button type="button" aria-label="Close" className="absolute inset-0" onClick={() => setInfo(null)} />
+          <div className="relative z-10 w-full max-w-[398px] rounded-2xl bg-white p-4 shadow-xl">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[16px] font-bold text-black">{info === "units" ? "Available Units" : "Charges"}</p>
+              <button type="button" aria-label="Close popup" onClick={() => setInfo(null)} className="text-[#64748B]">
+                <X size={18} />
+              </button>
+            </div>
+            {info === "charges" ? (
+              <p className="mt-3 text-[14px] leading-6 text-[#334155]">{chargesLabel}</p>
+            ) : (
+              <ul className="mt-3 max-h-[60vh] space-y-3 overflow-y-auto">
+                {units.map((unit, index) => (
+                  <li key={unit.id || `${unit.label}-${index}`} className="rounded-xl border border-[#F1F5F9] px-3 py-2.5">
+                    <p className="text-[14px] font-bold text-black">{unit.label}</p>
+                    <p className="mt-0.5 text-[13px] text-[#64748B]">
+                      {Number(unit.size).toLocaleString("en-IN")} Sq.Ft
+                      {unit.priceLabel ? ` · ${withRupee(unit.priceLabel)}` : ""}
+                    </p>
+                    {rupeeWords(unit.price) ? (
+                      <p className="mt-0.5 text-[12px] text-[#94A3B8]">{rupeeWords(unit.price)}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
